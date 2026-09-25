@@ -1,0 +1,28 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "lumen_birds:raven",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/lumen_birds/raven"
+      },
+      "geometry": {
+        "default": "geometry.lumen_birds.raven"
+      },
+      "animations": {
+        "flight": "animation.lumen_birds.raven.flight"
+      },
+      "scripts": {
+        "animate": [
+          "flight"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.lumen_birds"
+      ]
+    }
+  }
+}

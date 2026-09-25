@@ -1,0 +1,28 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "lumen_birds:blue_tit",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/lumen_birds/blue_tit"
+      },
+      "geometry": {
+        "default": "geometry.lumen_birds.blue_tit"
+      },
+      "animations": {
+        "flight": "animation.lumen_birds.blue_tit.flight"
+      },
+      "scripts": {
+        "animate": [
+          "flight"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.lumen_birds"
+      ]
+    }
+  }
+}

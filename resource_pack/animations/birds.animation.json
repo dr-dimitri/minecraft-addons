@@ -1,0 +1,180 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.lumen_birds.raven.flight": {
+      "loop": true,
+      "animation_length": 1,
+      "bones": {
+        "root": {
+          "rotation": [
+            0,
+            0,
+            -5
+          ],
+          "scale": "math.clamp(query.life_time / 1.2, 0.01, 1.0)"
+        },
+        "wing_left": {
+          "rotation": [
+            0,
+            0,
+            "math.mod(query.life_time, 5.0) < 2.4 ? math.sin(query.life_time * 1080.0) * 32.0 : 7.0 + math.sin(query.life_time * 120.0) * 3.0"
+          ]
+        },
+        "wing_right": {
+          "rotation": [
+            0,
+            0,
+            "-(math.mod(query.life_time, 5.0) < 2.4 ? math.sin(query.life_time * 1080.0) * 32.0 : 7.0 + math.sin(query.life_time * 120.0) * 3.0)"
+          ]
+        },
+        "tail": {
+          "rotation": [
+            "math.sin(query.life_time * 120.0) * 3.0",
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "animation.lumen_birds.blue_tit.flight": {
+      "loop": true,
+      "animation_length": 1,
+      "bones": {
+        "root": {
+          "rotation": [
+            0,
+            0,
+            -3
+          ],
+          "scale": "math.clamp(query.life_time / 1.2, 0.01, 1.0)"
+        },
+        "wing_left": {
+          "rotation": [
+            0,
+            0,
+            "math.sin(query.life_time * 2016.0) * 43.0"
+          ]
+        },
+        "wing_right": {
+          "rotation": [
+            0,
+            0,
+            "-(math.sin(query.life_time * 2016.0) * 43.0)"
+          ]
+        },
+        "tail": {
+          "rotation": [
+            "math.sin(query.life_time * 120.0) * 3.0",
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "animation.lumen_birds.robin.flight": {
+      "loop": true,
+      "animation_length": 1,
+      "bones": {
+        "root": {
+          "rotation": [
+            0,
+            0,
+            -3
+          ],
+          "scale": "math.clamp(query.life_time / 1.2, 0.01, 1.0)"
+        },
+        "wing_left": {
+          "rotation": [
+            0,
+            0,
+            "math.sin(query.life_time * 1800.0) * 43.0"
+          ]
+        },
+        "wing_right": {
+          "rotation": [
+            0,
+            0,
+            "-(math.sin(query.life_time * 1800.0) * 43.0)"
+          ]
+        },
+        "tail": {
+          "rotation": [
+            "math.sin(query.life_time * 120.0) * 3.0",
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "animation.lumen_birds.goldfinch.flight": {
+      "loop": true,
+      "animation_length": 1,
+      "bones": {
+        "root": {
+          "rotation": [
+            0,
+            0,
+            -3
+          ],
+          "scale": "math.clamp(query.life_time / 1.2, 0.01, 1.0)"
+        },
+        "wing_left": {
+          "rotation": [
+            0,
+            0,
+            "math.sin(query.life_time * 2160.0) * 43.0"
+          ]
+        },
+        "wing_right": {
+          "rotation": [
+            0,
+            0,
+            "-(math.sin(query.life_time * 2160.0) * 43.0)"
+          ]
+        },
+        "tail": {
+          "rotation": [
+            "math.sin(query.life_time * 120.0) * 3.0",
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "animation.lumen_birds.eagle.flight": {
+      "loop": true,
+      "animation_length": 1,
+      "bones": {
+        "root": {
+          "rotation": [
+            0,
+            0,
+            -9
+          ],
+          "scale": "math.clamp(query.life_time / 1.2, 0.01, 1.0)"
+        },
+        "wing_left": {
+          "rotation": [
+            0,
+            0,
+            "math.mod(query.life_time, 9.0) < 1.2 ? math.sin(query.life_time * 720.0) * 20.0 : 5.0 + math.sin(query.life_time * 90.0) * 2.0"
+          ]
+        },
+        "wing_right": {
+          "rotation": [
+            0,
+            0,
+            "-(math.mod(query.life_time, 9.0) < 1.2 ? math.sin(query.life_time * 720.0) * 20.0 : 5.0 + math.sin(query.life_time * 90.0) * 2.0)"
+          ]
+        },
+        "tail": {
+          "rotation": [
+            "math.sin(query.life_time * 120.0) * 3.0",
+            0,
+            0
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,106 @@
+name: Check and package birds
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Check Python and Node runtimes
+        run: |
+          python3 -c 'import sys; assert sys.version_info >= (3, 10), "Python 3.10+ required"'
+          node --version
+          node -e 'if (Number(process.versions.node.split(".")[0]) < 20) process.exit(1)'
+      - name: Check add-on version and release tag
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          if [ "$REF_TYPE" = tag ]; then
+            python3 scripts/check_release.py --tag "$RELEASE_TAG"
+          else
+            python3 scripts/check_release.py
+          fi
+      - name: Recreate bird packs and preview
+        run: |
+          python3 scripts/generate.py
+          python3 scripts/preview.py
+      - name: Test package and release metadata
+        run: python3 -m unittest discover -s tests -v
+      - name: Test bird behavior
+        run: npm test
+      - name: Build add-on
+        run: |
+          python3 scripts/build.py
+          python3 scripts/check_release.py
+      - name: Reject generated drift, including untracked files
+        run: |
+          drift="$(git status --porcelain --untracked-files=all -- resource_pack behavior_pack docs/PREVIEW.svg)"
+          if [ -n "$drift" ]; then
+            printf '%s\n' "$drift"
+            echo 'Commit regenerated product files before releasing.' >&2
+            exit 1
+          fi
+      - name: Check archive hashes
+        working-directory: dist
+        run: sha256sum -c SHA256SUMS.txt
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: lumen-silent-birds
+          path: |
+            dist/Lumen-Silent-Birds-*.mcaddon
+            dist/Lumen-Silent-Birds-Source-*.zip
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+  draft-release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/birds-v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Validate exact tag before creating release
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: python3 scripts/check_release.py --tag "$RELEASE_TAG"
+      - name: Download checked bird artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download "$GITHUB_RUN_ID" --name lumen-silent-birds --dir release-assets
+      - name: Verify complete asset set and checksums
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, os, re
+          from pathlib import Path
+          version = os.environ['RELEASE_TAG'].removeprefix('birds-v')
+          expected = {f'Lumen-Silent-Birds-{version}.mcaddon', f'Lumen-Silent-Birds-Source-{version}.zip'}
+          directory = Path('release-assets')
+          if {path.name for path in directory.iterdir()} != expected | {'SHA256SUMS.txt'}:
+              raise SystemExit('Unexpected or missing release assets')
+          checksums = {}
+          for line in (directory / 'SHA256SUMS.txt').read_text(encoding='utf-8').splitlines():
+              match = re.fullmatch(r'([0-9a-f]{64})  (.+)', line)
+              if match is None or match[2] not in expected or match[2] in checksums:
+                  raise SystemExit('Invalid checksum manifest')
+              checksums[match[2]] = match[1]
+          if set(checksums) != expected:
+              raise SystemExit('Incomplete checksum manifest')
+          for name, digest in checksums.items():
+              if hashlib.sha256((directory / name).read_bytes()).hexdigest() != digest:
+                  raise SystemExit('Checksum mismatch: ' + name)
+          PY
+      - name: Create reviewable draft with verified artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$RELEASE_TAG" release-assets/* \
+            --draft --verify-tag --title "$RELEASE_TAG" \
+            --notes 'Automatische Prüfungen erfolgreich. Vor Veröffentlichung die Windows-Abnahme und Release-Checkliste in docs/RELEASING.md prüfen.'

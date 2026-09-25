@@ -1,0 +1,28 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "lumen_birds:goldfinch",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/lumen_birds/goldfinch"
+      },
+      "geometry": {
+        "default": "geometry.lumen_birds.goldfinch"
+      },
+      "animations": {
+        "flight": "animation.lumen_birds.goldfinch.flight"
+      },
+      "scripts": {
+        "animate": [
+          "flight"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.lumen_birds"
+      ]
+    }
+  }
+}

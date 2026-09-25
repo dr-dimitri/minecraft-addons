@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lumen-Birds-Release"
+  short_description: "Add-on-Version, Artefakte und Releasefreigabe prüfen"
+  default_prompt: "Nutze $lumen-birds-release, um einen geprüften Releasekandidaten mit Releasehinweisen und offenen Abnahmepunkten vorzubereiten."

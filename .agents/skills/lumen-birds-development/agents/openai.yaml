@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lumen-Himmelsvögel"
+  short_description: "Vogelcontroller, Modelle und Bedrock-Pakete entwickeln"
+  default_prompt: "Nutze $lumen-birds-development, um die gewünschte Add-on-Änderung umzusetzen und zu prüfen."
