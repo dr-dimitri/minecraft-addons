@@ -55,7 +55,11 @@ def bird_svg(species, center, scale, pose="flight"):
                 color = "#" + "".join(f"{min(255, round(v * light)):02x}" for v in rgb)
                 projected = " ".join(f"{center[0] + p[0] * scale:.2f},{center[1] - p[1] * scale:.2f}" for p in coords)
                 # Camera looks toward positive Z after transforming the model.
-                faces.append((sum(p[2] for p in coords) / 4,
+                # Float sum changed in Python 3.12. Quantize the accurate depth
+                # so roundoff on coplanar faces cannot change painter ordering
+                # across supported runtimes; SVG coordinates use two decimals.
+                depth = round(math.fsum(p[2] for p in coords) / 4, 10)
+                faces.append((depth,
                               f'<polygon points="{projected}" fill="{color}" stroke="{color}" stroke-width=".35"/>'))
     return "\n".join(polygon for _, polygon in sorted(faces, reverse=True))
 

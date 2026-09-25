@@ -11,6 +11,8 @@
 - Eigene Modelle, TGA-Paletten, weiche Sitz-/Fluganimationen und aktualisierte
   Vorschau ergänzt. Der alte Releasekandidat 0.1.1 bleibt unverändert; die
   neue Darstellung und das Augenleuchten benötigen noch eine Bedrock-Abnahme.
+- Flächensortierung der Modellvorschau gegen Rundungsunterschiede zwischen
+  unterstützten Python-Versionen abgesichert, damit der Neubau unverändert bleibt.
 
 - CI prüft die Mindestversionen Python 3.10 / Node 20 und zusätzlich Python 3.14 /
   Node 24. Beide Kombinationen müssen vor der Release-Entwurfserstellung bestehen.
