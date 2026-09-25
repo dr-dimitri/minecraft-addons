@@ -6,7 +6,7 @@ import struct
 import zlib
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = [0, 1, 0]
+VERSION = [0, 1, 1]
 ENGINE = [1, 21, 90]  # First Bedrock release with stable @minecraft/server 2.0.0.
 RP_UUID = "5ab6115a-55e8-4ba6-8c9a-d2f707667af4"
 BP_UUID = "142232de-2028-4b6e-8048-c41d5ecda537"

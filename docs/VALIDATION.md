@@ -16,6 +16,10 @@ Die nativen Entitätskomponenten und Molang-Ausdrücke wurden anhand der offizie
 
 ## Noch auf Windows prüfen
 
+Für neue Kandidaten diese Schritte erneut ausführen und einen eigenen Beleg nach
+[releases/TEMPLATE.md](releases/TEMPLATE.md) anlegen. Die obigen Ergebnisse
+gelten ausschließlich für den historischen Stand 0.1.0.
+
 1. `.mcaddon` importieren. Beide Vogelpakete in einer Testwelt zunächst ohne zusätzliches Grafikpaket aktivieren. Im Content-Log dürfen keine Fehler zu `lumen_birds`, Geometrie, Texturen, Script-Modulen oder Molang auftreten.
 2. Tagsüber auf einer offenen Ebene warten. Zwei Raben, drei verschiedenfarbige kleine Vögel und ein höherer Adler sollen erscheinen. Flügel dürfen nicht vom Körper abreißen; Flugrichtung und Kopf müssen zusammenpassen. Auf Ruckeln durch Teleport-Interpolation achten.
 3. Mindestens drei Minuten stehen bleiben und anschließend eine längere Strecke laufen. Gruppen müssen ausgetauscht werden, ohne dass sich immer mehr Vögel ansammeln. Ein sichtbarer Wechsel nach 45 Sekunden ist möglich und wird noch nicht vollständig ausgeblendet.
@@ -25,7 +29,7 @@ Die nativen Entitätskomponenten und Molang-Ausdrücke wurden anhand der offizie
 7. Nether/Ende betreten und zurückkehren. Alte Gruppen sollen entfernt werden; in den beiden anderen Dimensionen darf keine Gruppe entstehen. Falls Mehrspieler genutzt wird, nahe und weit entfernte Spieler sowie deren Abmelden testen.
 8. Das gleiche Gebiet mit unveränderten Grafikeinstellungen jeweils mit und ohne Vogelpaket messen. Bedrock-Version, Auflösung, Hardware, Treiber, Grafikprofil und aktivierte Pakete dokumentieren; Durchschnitts-FPS und besonders ruckelige Momente notieren. Bei zugesicherter Kompatibilität zusätzliche Grafikpakete gesondert prüfen. Das bisherige Messziel WQHD, RX 9060 XT 16 GB und rund 80 FPS bleibt unbestätigt. Lumen Quality/Balanced aus `minecraft-look` ist eine optionale Testkombination.
 
-## Bekannte Grenzen
+## Bekannte Grenzen des damaligen Prüfstands 0.1.0
 
 - Wetter und Biome wählen noch keine anderen Arten. Alle fünf Arten erscheinen in jeder geeigneten offenen Overworld-Umgebung.
 - Die Vögel sind stilisierte Minecraft-Modelle mit flachen Palettenfarben, keine fotorealistischen Tiere.

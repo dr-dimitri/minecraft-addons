@@ -2,6 +2,23 @@
 
 ## [Unreleased]
 
+- Noch keine weiteren Änderungen.
+
+## [0.1.1] - Kandidat
+
+- Niedrige Hausdächer werden bei der Standortprüfung erkannt; dort werden keine
+  Vogelgruppen mehr für Spieler im Gebäude erzeugt.
+- Freie Gruppen werden bei mehr als drei weit getrennten Spielern reihum vergeben,
+  statt immer dieselben Spieler nach ihrer ID zu bevorzugen. Das Limit bleibt bei
+  18 geladenen Vögeln.
+- Das Source-ZIP nimmt nur vorgesehene Projektdateien auf. Lokale `.env`-Dateien,
+  Logs und virtuelle Umgebungen werden nicht mehr versehentlich mitgepackt;
+  passende symbolische Dateipfade führen zu einem Fehler.
+
+- README um eine schrittweise Bedrock-Installation unter Windows ergänzt:
+  Installationsdatei beziehen, importieren, beide Pakete aktivieren, Vögel finden
+  sowie Hilfe bei Problemen, Ausschalten und Aktualisieren.
+
 - Eigenständiges Repository `minecraft-addons` mit eigenen Projektvorgaben,
   Entwicklungs-/Release-Skills, CI und Releaseleitfaden. Das Grafikprojekt
   `minecraft-look` bleibt optional und wird nicht für Builds oder Tests benötigt.

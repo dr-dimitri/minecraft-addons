@@ -86,8 +86,10 @@ Vor einem Kandidaten zusätzlich:
   Dateien kontrollieren. Lizenz, Vorgaben, Releaseleitfaden und Abnahmevorlage
   müssen enthalten sein. Anschließend das Source-ZIP in einem frischen Verzeichnis
   entpacken und dort die obigen Tests und den Build ausführen. Der Source-Packer
-  berücksichtigt `.gitignore` nicht allgemein; deshalb nur aus einem sauberen,
-  geprüften Quellbestand bauen.
+  verwendet die erlaubten Projektpfade aus `SOURCE_PATTERNS` in `scripts/build.py`
+  und lehnt passende symbolische Dateipfade ab; Verzeichnislinks werden nicht
+  rekursiv verfolgt. Neue Quelldateitypen dort ergänzen. Weiterhin
+  nur aus einem sauberen, geprüften Quellbestand bauen.
 
 ## CI und Release-Entwurf
 

@@ -9,6 +9,7 @@ export class BirdManager {
     this.flights = new Map();
     this.groups = new Map();
     this.nextGroup = 0;
+    this.lastServedPlayerId = undefined;
     this.lastReconcile = -Infinity;
     this.lastWarning = -Infinity;
   }
@@ -49,7 +50,8 @@ export class BirdManager {
   outdoorAnchor(dimension, player) {
     const at = player.location;
     const center = dimension.getTopmostBlock({x: Math.floor(at.x), z: Math.floor(at.z)});
-    if (!center || center.location.y > at.y + 2) return undefined;
+    // Tolerate low ground cover, but reject a normal ceiling two blocks above the feet.
+    if (!center || center.location.y > at.y + 1) return undefined;
     let ground = center.location.y;
     // Probe the route's vicinity, not just the player's column. Never load chunks.
     for (const x of [-30, 0, 30]) for (const z of [-30, 0, 30]) {
@@ -108,15 +110,23 @@ export class BirdManager {
         this.groups.delete(id);
       }
     }
+    // Continue after the last successful allocation so distant players take turns
+    // under the global cap. An ID cursor also survives that player's disconnect.
+    const nextPlayer = this.lastServedPlayerId === undefined ? 0
+      : players.findIndex(p => p.id.localeCompare(this.lastServedPlayerId) > 0);
+    const candidates = nextPlayer < 0 ? players
+      : [...players.slice(nextPlayer), ...players.slice(0, nextPlayer)];
     // Count actual loaded entities too; failed removal/reload may leave an orphan.
-    for (const player of players) {
+    for (const player of candidates) {
       // Recount after every attempt: even a failed rollback may leave an orphan.
       const room = MAX_BIRDS - this.ownEntities(dimension).length;
       if (room < FLOCK.length) break;
       if ([...this.groups.values()].some(g => distanceSquared(g.anchor, player.location) < 80 ** 2)) continue;
       try {
         const anchor = this.outdoorAnchor(dimension, player);
-        if (anchor) this.spawnGroup(dimension, anchor, tick, player.id);
+        if (anchor && this.spawnGroup(dimension, anchor, tick, player.id)) {
+          this.lastServedPlayerId = player.id;
+        }
       } catch { this.warn(tick); /* Unloaded terrain: try later without a ticking area. */ }
     }
   }

@@ -100,6 +100,24 @@ test('nearby players share a group; distant players cannot exceed 18 loaded bird
   }
 });
 
+test('replacement groups rotate through distant players when the loaded bird cap is reached', () => {
+  const f = fixture(10);
+  const visited = new Set();
+  for (let round = 0; round < 4; round++) {
+    f.manager.tick(round * LIFETIME_TICKS);
+    assert.equal(f.entities.size, MAX_BIRDS);
+    for (const group of f.manager.groups.values()) visited.add(group.anchor.x);
+  }
+  assert.deepEqual([...visited].sort((a, b) => a - b), f.world.players.map(p => p.location.x));
+});
+
+test('allocation continues with the next player when the last served player disconnects', () => {
+  const f = fixture(5); f.manager.tick(0);
+  f.world.players = f.world.players.filter(p => p.id !== 'p2');
+  f.manager.tick(LIFETIME_TICKS);
+  assert.deepEqual([...f.manager.groups.values()].map(g => g.anchor.x), [600, 800, 0]);
+});
+
 test('night removes managed birds on the next tick and does not touch vanilla or other add-ons', () => {
   const f = fixture();
   f.dim.spawnEntity('minecraft:parrot', {x: 1, y: 65, z: 0});
@@ -117,6 +135,17 @@ test('no spawning under a roof, underground, beyond build height or into unloade
     f => f.dim.getTopmostBlock = () => undefined]) {
     const f = fixture(); setup(f); f.manager.tick(0);
     assert.equal(f.entities.size, 0); assert.equal(f.manager.groups.size, 0);
+  }
+});
+
+test('a normal two-block-high ceiling prevents spawning, including while jumping under it', () => {
+  for (const feetY of [64, 64.19]) {
+    const f = fixture();
+    f.world.players[0].location.y = feetY;
+    f.dim.surface = 66;
+    f.manager.tick(0);
+    assert.equal(f.entities.size, 0);
+    assert.equal(f.manager.groups.size, 0);
   }
 });
 
