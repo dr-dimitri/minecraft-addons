@@ -1,0 +1,31 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "lumen_birds:owl",
+      "materials": {
+        "default": "entity_alphatest",
+        "eyes": "entity_emissive"
+      },
+      "textures": {
+        "default": "textures/entity/lumen_birds/owl"
+      },
+      "geometry": {
+        "default": "geometry.lumen_birds.owl"
+      },
+      "animations": {
+        "flight": "animation.lumen_birds.owl.flight",
+        "perch": "animation.lumen_birds.owl.perch",
+        "pose": "controller.animation.lumen_birds.nocturnal"
+      },
+      "scripts": {
+        "animate": [
+          "pose"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.lumen_birds.nocturnal"
+      ]
+    }
+  }
+}

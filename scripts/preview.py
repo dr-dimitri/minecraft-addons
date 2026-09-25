@@ -1,7 +1,7 @@
 """Orthographic SVG inspection of the actual geometry; not an in-game screenshot."""
 from html import escape
 import math
-from generate import ROOT, SPECIES, PALETTES, NAMES, geometry
+from generate import ROOT, SPECIES, NOCTURNAL_SPECIES, PALETTES, NAMES, geometry, perch_animation
 
 
 def rotate(point, angles, pivot=(0, 0, 0)):
@@ -17,9 +17,11 @@ def rotate(point, angles, pivot=(0, 0, 0)):
     return [x + pivot[0], y + pivot[1], z + pivot[2]]
 
 
-def bird_svg(species, center, scale):
+def bird_svg(species, center, scale, pose="flight"):
     geo = geometry(species)["minecraft:geometry"][0]
     bones = {b["name"]: b for b in geo["bones"]}
+    nocturnal = species in NOCTURNAL_SPECIES
+    pose_bones = perch_animation()["bones"] if nocturnal and pose == "perch" else {}
     faces = []
     for bone in geo["bones"]:
         for cube in bone.get("cubes", []):
@@ -32,15 +34,24 @@ def bird_svg(species, center, scale):
                 ancestor = bone
                 while ancestor:
                     angle = 7 if ancestor["name"] == "wing_left" else -7 if ancestor["name"] == "wing_right" else 0
-                    point = rotate(point, [0, 0, angle], ancestor["pivot"])
+                    angles = pose_bones.get(ancestor["name"], {}).get("rotation", [0, 0, angle])
+                    if nocturnal and pose == "flight" and ancestor["name"] == "root":
+                        angles = [-18, 0, -4]
+                    point = rotate(point, angles, ancestor["pivot"])
                     ancestor = bones.get(ancestor.get("parent"))
-                points.append(rotate(point, [30, -28, -9]))
+                # Front views keep both owl eyes visible in this simple painter
+                # preview, while the higher flight view also shows the wings.
+                camera = ([24, 0, 0] if pose == "perch" else [38, 0, 0]) if nocturnal else [30, -28, -9]
+                points.append(rotate(point, camera))
             palette = PALETTES[species][int(cube["uv"]["north"]["uv"][0] // 8)]
             rgb = bytes.fromhex(palette)
             for indices, light in [((0, 1, 2, 3), .85), ((4, 7, 6, 5), .65),
                                     ((0, 3, 7, 4), .73), ((1, 5, 6, 2), .95),
                                     ((3, 2, 6, 7), 1.22), ((0, 4, 5, 1), .6)]:
                 coords = [points[i] for i in indices]
+                # Bright red previews the eye material mask, not game lighting.
+                if bone["name"] == "eyes":
+                    light = 1
                 color = "#" + "".join(f"{min(255, round(v * light)):02x}" for v in rgb)
                 projected = " ".join(f"{center[0] + p[0] * scale:.2f},{center[1] - p[1] * scale:.2f}" for p in coords)
                 # Camera looks toward positive Z after transforming the model.
@@ -50,28 +61,42 @@ def bird_svg(species, center, scale):
 
 
 def create_preview():
-    svg = ['<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="940" viewBox="0 0 1440 940">',
+    width, columns, margin, gap, card_h = 1440, 3, 64, 22, 315
+    card_w = (width - 2 * margin - gap * (columns - 1)) / columns
+    rows = math.ceil(len(SPECIES) / columns)
+    height = 205 + rows * (card_h + gap) + 67
+    svg = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
            '<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#133746"/><stop offset="1" stop-color="#081b28"/></linearGradient></defs>',
-           '<rect width="1440" height="940" fill="url(#sky)"/>',
+           f'<rect width="{width}" height="{height}" fill="url(#sky)"/>',
            '<g font-family="system-ui, sans-serif">',
            '<text x="64" y="65" fill="#e6bd73" font-size="17" letter-spacing="4">LUMEN · STUMME HIMMELSVÖGEL</text>',
            '<text x="64" y="120" fill="#edf4ee" font-size="42" font-weight="650">Ein lebendiger Himmel. Ganz ohne Gezwitscher.</text>',
-           '<text x="64" y="157" fill="#a6bdc6" font-size="19">Geometrievorschau der fünf Vogelmodelle · kein Screenshot aus Minecraft</text>']
-    positions = {"raven": (64, 205), "blue_tit": (405, 205), "robin": (64, 530), "goldfinch": (405, 530)}
+           f'<text x="64" y="157" fill="#a6bdc6" font-size="19">Geometrievorschau · {len(SPECIES)} Vogelmodelle · kein Screenshot aus Minecraft</text>']
     subtitles = {"raven": "Flügelschlag & Gleitphasen", "blue_tit": "Blaue Flügel · gelbe Brust",
-                 "robin": "Warme orangefarbene Brust", "goldfinch": "Roter Kopf · gelbe Flügelbinde"}
-    for species, (x, y) in positions.items():
-        svg += [f'<rect x="{x}" y="{y}" width="318" height="300" rx="22" fill="#173542" stroke="#33515b"/>',
-                bird_svg(species, (x + 159, y + 133), 8 if species == "raven" else 14),
-                f'<text x="{x + 23}" y="{y + 244}" fill="#edf4ee" font-size="25" font-weight="600">{NAMES[species][0]}</text>',
-                f'<text x="{x + 23}" y="{y + 273}" fill="#a6bdc6" font-size="15">{escape(subtitles[species])}</text>']
-    svg += ['<rect x="746" y="205" width="630" height="625" rx="22" fill="#204451" stroke="#44616a"/>',
-            '<ellipse cx="1061" cy="465" rx="259" ry="112" fill="none" stroke="#6b8286" stroke-width="1.5" stroke-dasharray="4 9" opacity=".55"/>',
-            bird_svg("eagle", (1061, 442), 14),
-            '<text x="784" y="715" fill="#f0d399" font-size="17" letter-spacing="2">HOCH ÜBER DER LANDSCHAFT</text>',
-            '<text x="784" y="757" fill="#edf4ee" font-size="34" font-weight="600">Der kreisende Steinadler</text>',
-            '<text x="784" y="793" fill="#bad0d5" font-size="18">Breite Schwingen · gespreizte Federspitzen · ruhige Kreise</text>',
-            '<text x="64" y="891" fill="#a6bdc6" font-size="18">Nur tagsüber in der Oberwelt · 6 Vögel je Gruppe · höchstens 18 geladene Vögel</text>',
+                 "robin": "Warme orangefarbene Brust", "goldfinch": "Roter Kopf · gelbe Flügelbinde",
+                 "eagle": "Breite Schwingen · ruhige Kreise",
+                 "owl": "Dämmerung & Nacht · rote Leuchtaugen",
+                 "eagle_owl": "Größer · Federohren · rote Leuchtaugen"}
+    scales = {"raven": 11, "blue_tit": 19, "robin": 19, "goldfinch": 19, "eagle": 9}
+    for index, species in enumerate(SPECIES):
+        x = margin + index % columns * (card_w + gap)
+        y = 205 + index // columns * (card_h + gap)
+        nocturnal = species in NOCTURNAL_SPECIES
+        fill = "#202f43" if nocturnal else "#173542"
+        svg.append(f'<rect x="{x}" y="{y}" width="{card_w}" height="{card_h}" rx="22" fill="{fill}" stroke="#33515b"/>')
+        if nocturnal:
+            # Both snapshots use the real connected skeleton and sitting angles.
+            svg += [f'<rect x="{x + card_w - 147}" y="{y + 183}" width="113" height="14" rx="6" fill="#416047"/>',
+                    bird_svg(species, (x + 145, y + 177), 11 if species == "owl" else 8.8),
+                    bird_svg(species, (x + card_w - 88, y + 182), 14 if species == "owl" else 11, pose="perch"),
+                    f'<text x="{x + 105}" y="{y + 220}" fill="#a6bdc6" font-size="14">Im Flug</text>',
+                    f'<text x="{x + card_w - 122}" y="{y + 220}" fill="#a6bdc6" font-size="14">Baumsitz</text>']
+        else:
+            svg.append(bird_svg(species, (x + card_w / 2, y + 137), scales[species]))
+        svg += [f'<text x="{x + 23}" y="{y + 263}" fill="#edf4ee" font-size="25" font-weight="600">{NAMES[species][0]}</text>',
+                f'<text x="{x + 23}" y="{y + 291}" fill="#a6bdc6" font-size="15">{escape(subtitles[species])}</text>']
+    svg += [f'<text x="64" y="{height - 42}" fill="#a6bdc6" font-size="18">Oberwelt · Tag- und Nachtvögel im Wechsel · höchstens 18 geladene Vögel insgesamt</text>',
+            f'<text x="64" y="{height - 16}" fill="#8da4ae" font-size="15">Leuchtaugen und Posewechsel müssen zusätzlich in Minecraft geprüft werden.</text>',
             '</g></svg>']
     (ROOT / "docs" / "PREVIEW.svg").write_text("\n".join(svg), encoding="utf-8")
 

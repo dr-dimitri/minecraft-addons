@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+- Eule und Uhu als eigene stumme Nachtvögel mit roten selbstleuchtenden Augen
+  ergänzt. Sie wechseln in Dämmerung/Nacht zwischen Flug und Sitzen auf freien
+  Laubblöcken; tagsüber bleiben die bisherigen fünf Arten aktiv.
+- Sitzplätze, Tag-/Nachtwechsel und Baumverlust werden kontrolliert aufgeräumt.
+  Höchstens drei Gruppen und insgesamt 18 geladene Vögel bleiben erhalten;
+  Nachtgruppen bestehen aus zwei Tieren.
+- Eigene Modelle, TGA-Paletten, weiche Sitz-/Fluganimationen und aktualisierte
+  Vorschau ergänzt. Der alte Releasekandidat 0.1.1 bleibt unverändert; die
+  neue Darstellung und das Augenleuchten benötigen noch eine Bedrock-Abnahme.
+
 - CI prüft die Mindestversionen Python 3.10 / Node 20 und zusätzlich Python 3.14 /
   Node 24. Beide Kombinationen müssen vor der Release-Entwurfserstellung bestehen.
 - Neues Kandidatengate automatisiert Wiederholungsbuild, Prüfsummen, Prüfung der

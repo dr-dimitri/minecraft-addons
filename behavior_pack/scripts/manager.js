@@ -1,5 +1,6 @@
-import {SPECIES, FLOCK, MAX_BIRDS, LIFETIME_TICKS, INTEREST_DISTANCE,
-  isDay, distanceSquared, seedFor, positionAt} from './flight.js';
+import {SPECIES, FLOCK, NIGHT_FLOCK, MAX_BIRDS, MAX_GROUPS, LIFETIME_TICKS, INTEREST_DISTANCE,
+  activityAt, distanceSquared, seedFor, positionAt, owlPositionAt} from './flight.js';
+import {findPerches, validPerch} from './trees.js';
 
 // API access is injected so daylight, failures, reloads and caps can be tested.
 export class BirdManager {
@@ -12,6 +13,7 @@ export class BirdManager {
     this.lastServedPlayerId = undefined;
     this.lastReconcile = -Infinity;
     this.lastWarning = -Infinity;
+    this.activity = undefined;
   }
 
   warn(tick) {
@@ -38,10 +40,10 @@ export class BirdManager {
     return SPECIES.flatMap(species => dimension.getEntities({type: 'lumen_birds:' + species}));
   }
 
-  sweep(dimension, daylight) {
-    // Only our five exact type IDs; never vanilla birds or another add-on.
+  sweep(dimension, activity) {
+    // Only our exact type IDs; never vanilla birds or another add-on.
     for (const entity of this.ownEntities(dimension)) {
-      if (!daylight || !this.flights.has(entity.id)) {
+      if (!activity || !this.flights.has(entity.id)) {
         try { entity.remove(); } catch { /* Skip unavailable entity. */ }
       }
     }
@@ -64,25 +66,29 @@ export class BirdManager {
     return {x: at.x, y, z: at.z};
   }
 
-  spawnGroup(dimension, anchor, tick, playerId) {
+  spawnGroup(dimension, anchor, tick, playerId, activity = 'day', perches = []) {
     const id = ++this.nextGroup;
-    const group = {id, anchor, born: tick};
+    const group = {id, anchor, born: tick, activity};
+    const flock = activity === 'night' ? NIGHT_FLOCK : FLOCK;
     const created = [];
     try {
-      for (let i = 0; i < FLOCK.length; i++) {
-        const species = FLOCK[i];
+      for (let i = 0; i < flock.length; i++) {
+        const species = flock[i];
         // Golden-angle spacing prevents consecutive hash inputs clustering birds.
         const phase = (seedFor(playerId + ':' + tick) * Math.PI * 2 + i * 2.399963229728653) % (Math.PI * 2);
-        const pose = positionAt(species, anchor, 0, phase);
+        const perch = perches[i], offset = i * 20;
+        const pose = perch ? owlPositionAt(species, perch, offset, phase)
+          : positionAt(species, anchor, 0, phase);
         const block = dimension.getBlock({
           x: Math.floor(pose.location.x), y: Math.floor(pose.location.y), z: Math.floor(pose.location.z),
         });
         if (!block?.isAir) throw new Error('Sky location unavailable');
         const entity = dimension.spawnEntity('lumen_birds:' + species, pose.location);
         // Register before the next fallible call, so a failure cannot leak birds.
-        const flight = {entity, group, species, phase};
+        const flight = {entity, group, species, phase, perch, offset, perched: pose.perched};
         this.flights.set(entity.id, flight);
         created.push(entity.id);
+        if (perch) entity.setProperty('lumen_birds:perched', pose.perched);
         if (!entity.tryTeleport(pose.location, {rotation: pose.rotation, keepVelocity: false, checkForBlocks: true})) {
           throw new Error('Sky location blocked');
         }
@@ -96,9 +102,9 @@ export class BirdManager {
     }
   }
 
-  reconcile(dimension, daylight, tick) {
-    this.sweep(dimension, daylight);
-    if (!daylight) return;
+  reconcile(dimension, activity, tick) {
+    this.sweep(dimension, activity);
+    if (!activity) return;
     const players = this.world.getPlayers()
       .filter(p => p.dimension.id === 'minecraft:overworld')
       .sort((a, b) => a.id.localeCompare(b.id));
@@ -118,13 +124,17 @@ export class BirdManager {
       : [...players.slice(nextPlayer), ...players.slice(0, nextPlayer)];
     // Count actual loaded entities too; failed removal/reload may leave an orphan.
     for (const player of candidates) {
+      if (this.groups.size >= MAX_GROUPS) break;
       // Recount after every attempt: even a failed rollback may leave an orphan.
       const room = MAX_BIRDS - this.ownEntities(dimension).length;
-      if (room < FLOCK.length) break;
+      if (room < (activity === 'night' ? NIGHT_FLOCK.length : FLOCK.length)) break;
       if ([...this.groups.values()].some(g => distanceSquared(g.anchor, player.location) < 80 ** 2)) continue;
       try {
-        const anchor = this.outdoorAnchor(dimension, player);
-        if (anchor && this.spawnGroup(dimension, anchor, tick, player.id)) {
+        const perches = activity === 'night' ? findPerches(dimension, player) : [];
+        const anchor = activity === 'night'
+          ? (perches.length === NIGHT_FLOCK.length ? {...player.location} : undefined)
+          : this.outdoorAnchor(dimension, player);
+        if (anchor && this.spawnGroup(dimension, anchor, tick, player.id, activity, perches)) {
           this.lastServedPlayerId = player.id;
         }
       } catch { this.warn(tick); /* Unloaded terrain: try later without a ticking area. */ }
@@ -133,19 +143,35 @@ export class BirdManager {
 
   tick(tick) {
     try {
-      const daylight = isDay(this.world.getTimeOfDay());
-      if (!daylight) this.retireAll();
+      const activity = activityAt(this.world.getTimeOfDay());
+      if (activity !== this.activity) {
+        this.retireAll();
+        this.activity = activity;
+        this.lastReconcile = -Infinity;
+      }
+      if (!activity) this.retireAll();
       const dimension = this.world.getDimension('overworld');
       if (tick - this.lastReconcile >= 100) {
         this.lastReconcile = tick;
-        this.reconcile(dimension, daylight, tick);
+        this.reconcile(dimension, activity, tick);
       }
-      if (!daylight) return;
+      if (!activity) return;
       for (const [id, flight] of this.flights) {
         const age = tick - flight.group.born;
         if (age >= LIFETIME_TICKS || age < 0) { this.retire(id); continue; }
         try {
-          const pose = positionAt(flight.species, flight.group.anchor, age / 20, flight.phase);
+          const pose = flight.perch
+            ? owlPositionAt(flight.species, flight.perch, age / 20 + flight.offset, flight.phase)
+            : positionAt(flight.species, flight.group.anchor, age / 20, flight.phase);
+          if (flight.perch) {
+            if ((tick % 20 === 0 || pose.perched !== flight.perched) && !validPerch(dimension, flight.perch)) {
+              this.retire(id); continue;
+            }
+            if (pose.perched !== flight.perched) {
+              flight.entity.setProperty('lumen_birds:perched', pose.perched);
+              flight.perched = pose.perched;
+            }
+          }
           // Small per-tick steps; interpolation must still be checked in Bedrock.
           if (!flight.entity.tryTeleport(pose.location, {rotation: pose.rotation, keepVelocity: false, checkForBlocks: true})) {
             this.retire(id);

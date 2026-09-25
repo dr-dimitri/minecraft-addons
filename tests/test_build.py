@@ -26,7 +26,8 @@ class SourceArchiveTests(unittest.TestCase):
                     "docs/releases/TEMPLATE.md", "docs/PREVIEW.svg",
                     ".agents/skills/birds/SKILL.md", ".agents/skills/birds/agents/openai.yaml",
                     ".github/workflows/build.yml", "behavior_pack/scripts/main.js",
-                    "resource_pack/texts/de_DE.lang", "resource_pack/textures/bird.png"]
+                    "resource_pack/texts/de_DE.lang", "resource_pack/textures/bird.png",
+                    "resource_pack/textures/owl.tga"]
         excluded = [".env", ".env.local", "credentials.json", "session.log", "notes.txt",
                     ".venv/lib/private.py", "venv/lib/private.py", "node_modules/private.js",
                     "dist/previous.zip", "scripts/__pycache__/build.pyc", "scripts/.private.py",

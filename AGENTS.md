@@ -64,8 +64,9 @@ nicht erforderlich.
   offizielle Dokumentation/Typen prüfen. Nicht an eine Grafikpaketversion koppeln.
 - Bestehendes Verhalten erhalten, sofern der Auftrag es nicht gezielt ändert:
   stumme dekorative Vögel, keine Blockänderungen, keine Commands, keine absichtlich
-  geladenen Chunks, Tag/Overworld, höchstens 18 geladene Vögel sowie Aufräumen bei
-  Nacht, Dimensionswechsel und Wiederladen. Nativen Despawn als Rückfallebene erhalten.
+  geladenen Chunks, nur Overworld, höchstens 18 geladene Vögel sowie Aufräumen bei
+  Aktivitätswechsel, Dimensionswechsel und Wiederladen. Tagvögel sind nur tagsüber
+  aktiv; Eulen und Uhus in Dämmerung/Nacht mit geprüften Sitzplätzen auf Laub. Nativen Despawn als Rückfallebene erhalten.
 - Fremde Assets benötigen nachvollziehbare Herkunft und Rechtehinweise. Die
   bestehenden Modelle und Paletten sind eigene Projektinhalte; `NOTICE.md` und
   `LICENSE` bei geänderter Herkunft entsprechend pflegen.

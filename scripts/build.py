@@ -17,7 +17,7 @@ SOURCE_PATTERNS = (
     ".agents/skills/*/SKILL.md", ".agents/skills/*/agents/*.yaml",
     ".github/*.md", ".github/workflows/*.yml", ".github/workflows/*.yaml",
     "behavior_pack/**/*.json", "behavior_pack/scripts/*.js", "behavior_pack/*.png",
-    "resource_pack/**/*.json", "resource_pack/**/*.png", "resource_pack/texts/*.lang",
+    "resource_pack/**/*.json", "resource_pack/**/*.png", "resource_pack/**/*.tga", "resource_pack/texts/*.lang",
 )
 
 

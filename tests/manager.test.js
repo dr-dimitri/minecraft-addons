@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {BirdManager} from '../src/manager.js';
-import {FLOCK, MAX_BIRDS, LIFETIME_TICKS, isDay, positionAt, distanceSquared} from '../src/flight.js';
+import {FLOCK, NIGHT_FLOCK, MAX_BIRDS, LIFETIME_TICKS, isDay, activityAt,
+  positionAt, owlPositionAt, distanceSquared} from '../src/flight.js';
 
 function fixture(playerCount = 1, spacing = 200) {
   let nextId = 0;
@@ -10,17 +11,28 @@ function fixture(playerCount = 1, spacing = 200) {
   const dim = {
     id: 'minecraft:overworld', heightRange: {min: -64, max: 320},
     surface: 63, loaded: true, air: true, spawnCount: 0, failSpawnAt: 0, failTeleportAt: 0,
-    removalFails: false, blockTeleports: false,
-    getTopmostBlock() {
+    removalFails: false, blockTeleports: false, failProperty: false, trees: new Map(), blocked: new Set(),
+    getTopmostBlock({x, z}) {
       if (!this.loaded) throw new Error('Unloaded chunk');
-      return {location: {y: this.surface}};
+      const tree = this.trees.get(x + ',' + z);
+      return {location: {x, y: tree?.y ?? this.surface, z}, typeId: tree?.typeId ?? 'minecraft:stone'};
     },
-    getBlock() { return this.loaded ? {isAir: this.air} : undefined; },
+    getBlock({x, y, z}) {
+      if (!this.loaded) return undefined;
+      const tree = this.trees.get(x + ',' + z);
+      if (tree?.y === y) return {isAir: false, typeId: tree.typeId};
+      if (this.blocked.has([x, y, z].join(','))) return {isAir: false, typeId: 'minecraft:stone'};
+      return {isAir: this.air, typeId: this.air ? 'minecraft:air' : 'minecraft:stone'};
+    },
     getEntities({type}) { return [...entities.values()].filter(e => e.typeId === type); },
     spawnEntity(typeId, location) {
       if (++this.spawnCount === this.failSpawnAt) throw new Error('Spawn failed');
       const entity = {
-        id: 'bird-' + ++nextId, typeId, location, teleports: 0, valid: true,
+        id: 'bird-' + ++nextId, typeId, location, teleports: 0, valid: true, properties: {}, propertyWrites: 0,
+        setProperty(name, value) {
+          if (dim.failProperty || !this.valid) throw new Error('Property unavailable');
+          this.properties[name] = value; this.propertyWrites++;
+        },
         tryTeleport(at, options) {
           if (!this.valid) throw new Error('Invalid entity');
           if (nextId === dim.failTeleportAt || dim.blockTeleports) return false;
@@ -51,6 +63,130 @@ function fixture(playerCount = 1, spacing = 200) {
 test('daylight excludes dawn, dusk and all of night', () => {
   for (const t of [0, 499, 11500, 18000, 23999, NaN, Infinity, -1]) assert.equal(isDay(t), false);
   for (const t of [500, 6000, 11499, 30000]) assert.equal(isDay(t), true);
+});
+
+function plantTrees(f) {
+  for (const player of f.world.players) for (const dx of [-4, 4]) {
+    f.dim.trees.set((player.location.x + dx) + ',0', {y: 70, typeId: 'minecraft:oak_leaves'});
+  }
+}
+
+test('owls cover dusk, night and dawn, while invalid world times never spawn birds', () => {
+  for (const time of [0, 499, 11500, 18000, 23999, -1]) assert.equal(activityAt(time), 'night');
+  for (const time of [500, 6000, 11499, 30000]) assert.equal(activityAt(time), 'day');
+  for (const time of [NaN, Infinity]) {
+    assert.equal(activityAt(time), undefined);
+    const f = fixture(); plantTrees(f); f.world.time = time; f.manager.tick(0);
+    assert.equal(f.entities.size, 0);
+  }
+});
+
+test('a night group has an owl and eagle owl, with a seated and flying bird', () => {
+  for (const time of [0, 11500, 18000]) {
+    const f = fixture(); plantTrees(f); f.world.time = time; f.manager.tick(0);
+    assert.deepEqual([...f.entities.values()].map(e => e.typeId.split(':')[1]), NIGHT_FLOCK);
+    assert.deepEqual([...f.entities.values()].map(e => e.properties['lumen_birds:perched']), [true, false]);
+    const owl = [...f.entities.values()][0];
+    assert.equal(owl.location.y, 71.02);
+  }
+});
+
+test('night birds require two clear leaf perches and do not spawn below roofs or underground', () => {
+  for (const setup of [() => {}, f => { plantTrees(f); f.dim.surface = 66; },
+    f => { plantTrees(f); f.dim.trees.delete('-4,0'); },
+    f => { plantTrees(f); f.dim.trees.get('-4,0').typeId = 'minecraft:stone'; },
+    f => { plantTrees(f); f.dim.blocked.add('-4,72,0'); },
+    f => { plantTrees(f); f.dim.loaded = false; },
+    f => { plantTrees(f); for (const tree of f.dim.trees.values()) tree.y = 315; },
+    f => { plantTrees(f); f.dim.trees.set('0,0', {y: 75, typeId: 'minecraft:oak_leaves'});
+      f.dim.blocked.add('0,68,0'); }]) {
+    const f = fixture(); setup(f); f.world.time = 18000; f.manager.tick(0);
+    assert.equal(f.entities.size, 0); assert.equal(f.manager.groups.size, 0);
+  }
+});
+
+test('players below a tree canopy can see night birds', () => {
+  const f = fixture(); plantTrees(f);
+  f.dim.trees.set('0,0', {y: 73, typeId: 'minecraft:birch_leaves'});
+  f.world.time = 18000; f.manager.tick(0);
+  assert.equal(f.entities.size, 2);
+});
+
+test('a single small tree crown provides two perches even with only one coarse grid hit', () => {
+  const f = fixture();
+  for (let x = 2; x <= 6; x++) for (let z = 2; z <= 6; z++) {
+    f.dim.trees.set(x + ',' + z, {y: 70, typeId: 'minecraft:oak_leaves'});
+  }
+  f.world.time = 18000; f.manager.tick(0);
+  assert.equal(f.entities.size, 2);
+  const perches = [...f.manager.flights.values()].map(flight => flight.perch);
+  assert.ok(distanceSquared(...perches) >= 4);
+});
+
+test('owl takeoff, closed flight and landing stay continuous and return to the same perch', () => {
+  const perch = {x: 10.5, y: 71.02, z: -8.5, cruiseY: 95};
+  for (const species of NIGHT_FLOCK) for (const phase of [0, 2, 5]) {
+    let previous = owlPositionAt(species, perch, 0, phase);
+    for (let tick = 1; tick <= 1600; tick++) {
+      const pose = owlPositionAt(species, perch, tick / 20, phase);
+      const delta = Math.hypot(...['x', 'y', 'z'].map(key => pose.location[key] - previous.location[key]));
+      assert.ok(delta < .5, `${species} at ${tick}: ${delta}`);
+      if (pose.perched) assert.deepEqual(pose.location, {x: perch.x, y: perch.y, z: perch.z});
+      assert.ok(pose.location.y >= perch.y && pose.location.y <= perch.cruiseY);
+      previous = pose;
+    }
+  }
+});
+
+test('perch animation state follows landings and takeoffs without being rewritten every tick', () => {
+  const f = fixture(); plantTrees(f); f.world.time = 18000; f.manager.tick(0);
+  const owl = [...f.entities.values()][0];
+  for (let tick = 1; tick <= 800; tick++) {
+    f.manager.tick(tick);
+    assert.equal(owl.properties['lumen_birds:perched'], tick < 180 || tick >= 700);
+    assert.equal(f.entities.size, 2);
+  }
+  assert.equal(owl.propertyWrites, 3);
+});
+
+test('removed leaves and blocked perches retire their owls instead of leaving them floating', () => {
+  for (const change of [f => f.dim.trees.clear(), f => f.dim.blocked.add('-4,71,0')]) {
+    const f = fixture(); plantTrees(f); f.world.time = 18000; f.manager.tick(0);
+    const first = [...f.entities.keys()][0]; change(f); f.manager.tick(20);
+    assert.equal(f.entities.has(first), false);
+  }
+});
+
+test('day and night groups replace each other immediately, preserving the global cap', () => {
+  const f = fixture(8); plantTrees(f); f.manager.tick(0);
+  assert.equal(f.entities.size, 18);
+  f.world.time = 11500; f.manager.tick(1);
+  assert.equal(f.entities.size, 6);
+  assert.ok([...f.entities.values()].every(e => NIGHT_FLOCK.includes(e.typeId.split(':')[1])));
+  f.world.time = 500; f.manager.tick(2);
+  assert.equal(f.entities.size, 18);
+  assert.ok([...f.entities.values()].every(e => FLOCK.includes(e.typeId.split(':')[1])));
+});
+
+test('unremovable day birds count against the night limit until cleanup succeeds', () => {
+  const f = fixture(5); plantTrees(f); f.manager.tick(0);
+  f.dim.removalFails = true; f.world.time = 11500; f.manager.tick(1);
+  assert.equal(f.entities.size, MAX_BIRDS); assert.equal(f.manager.groups.size, 0);
+  f.dim.removalFails = false; f.manager.tick(101);
+  assert.equal(f.entities.size, 6);
+});
+
+test('night groups clean up on reload, dimension change, disconnect and failed property writes', () => {
+  const f = fixture(); plantTrees(f); f.world.time = 18000; f.manager.tick(0);
+  const oldIds = [...f.entities.keys()];
+  const reloaded = new BirdManager(f.world); reloaded.tick(1);
+  assert.ok(oldIds.every(id => !f.entities.has(id))); assert.equal(f.entities.size, 2);
+  f.world.players[0].dimension = {id: 'minecraft:nether'}; reloaded.tick(101);
+  assert.equal(f.entities.size, 0);
+  f.world.players[0].dimension = f.dim; f.dim.failProperty = true; reloaded.tick(201);
+  assert.equal(f.entities.size, 0);
+  f.dim.failProperty = false; reloaded.tick(301); assert.equal(f.entities.size, 2);
+  f.world.players = []; reloaded.tick(401); assert.equal(f.entities.size, 0);
 });
 
 test('one outdoor player gets two ravens, three songbirds and one eagle', () => {

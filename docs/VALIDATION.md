@@ -20,6 +20,10 @@ Für neue Kandidaten diese Schritte erneut ausführen und einen eigenen Beleg na
 [releases/TEMPLATE.md](releases/TEMPLATE.md) anlegen. Die obigen Ergebnisse
 gelten ausschließlich für den historischen Stand 0.1.0.
 
+Für den aktuellen Entwicklungsstand zusätzlich [Eulen und Uhus prüfen](OWL_VALIDATION.md)
+verwenden. Dessen Tag-/Nachtprüfung ersetzt den damaligen Schritt 4: Abends
+verschwinden nur die Tagvögel; auf geeigneten Baumkronen übernehmen Eulen und Uhus.
+
 1. `.mcaddon` importieren. Beide Vogelpakete in einer Testwelt zunächst ohne zusätzliches Grafikpaket aktivieren. Im Content-Log dürfen keine Fehler zu `lumen_birds`, Geometrie, Texturen, Script-Modulen oder Molang auftreten.
 2. Tagsüber auf einer offenen Ebene warten. Zwei Raben, drei verschiedenfarbige kleine Vögel und ein höherer Adler sollen erscheinen. Flügel dürfen nicht vom Körper abreißen; Flugrichtung und Kopf müssen zusammenpassen. Auf Ruckeln durch Teleport-Interpolation achten.
 3. Mindestens drei Minuten stehen bleiben und anschließend eine längere Strecke laufen. Gruppen müssen ausgetauscht werden, ohne dass sich immer mehr Vögel ansammeln. Ein sichtbarer Wechsel nach 45 Sekunden ist möglich und wird noch nicht vollständig ausgeblendet.

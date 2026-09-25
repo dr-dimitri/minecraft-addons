@@ -1,10 +1,10 @@
 # minecraft-addons · Lumen Stumme Himmelsvögel
 
-Optionales Vogel-Add-on für Minecraft Bedrock unter Windows, **Testversion 0.1.1**. Es ergänzt Raben, Blaumeisen, Rotkehlchen, Stieglitze und einen kreisenden Steinadler. Die Vögel sind dekorativ und erhalten keine Geräusche. Das Add-on funktioniert eigenständig. Das optionale Lumen-Grafikpaket wird im separaten Repository [minecraft-look](https://github.com/dr-dimitri/minecraft-look) entwickelt; eine gemeinsame Nutzung ist vorbereitet und muss im Spiel noch geprüft werden.
+Optionales Vogel-Add-on für Minecraft Bedrock unter Windows. Der aktuelle **Entwicklungsstand (Unreleased)** ergänzt Raben, Blaumeisen, Rotkehlchen, Stieglitze und einen kreisenden Steinadler um Eulen und Uhus für Dämmerung und Nacht. Die Vögel sind dekorativ und erhalten keine Geräusche. Das Add-on funktioniert eigenständig. Das optionale Lumen-Grafikpaket wird im separaten Repository [minecraft-look](https://github.com/dr-dimitri/minecraft-look) entwickelt; eine gemeinsame Nutzung ist vorbereitet und muss im Spiel noch geprüft werden.
 
 **Lokal geprüft, noch nicht in Minecraft ausgeführt.** Auf diesem Mac stehen Minecraft für Windows und die RX 9060 XT nicht zur Verfügung. Import, Animationen, Geräuschfreiheit im Spiel und Bildrate sind daher noch auf dem Ziel-PC zu prüfen. Die Modelle sind bewusst im kantigen Minecraft-Stil gestaltet; es sind keine fotorealistischen Tiermodelle.
 
-Zum Testen des vorhandenen Kandidaten gibt es eine [Windows-Checkliste für 0.1.1](docs/releases/0.1.1-windows-checklist.md) mit Dateinamen, Prüfsummen und Feldern für deine Ergebnisse.
+Der vorhandene Kandidat **0.1.1 enthält noch keine Eulen oder Uhus**. Die Nachtvögel sind im aktuellen Quellstand enthalten und werden erst mit einem neuen versionierten Kandidaten als Update bereitgestellt. Zum Testen des bisherigen Kandidaten gibt es eine [Windows-Checkliste für 0.1.1](docs/releases/0.1.1-windows-checklist.md) mit Dateinamen, Prüfsummen und Feldern für deine Ergebnisse.
 
 ![Originale Modellgeometrie, außerhalb von Minecraft gerendert](docs/PREVIEW.svg)
 
@@ -58,11 +58,15 @@ Verwende für diese Testversion zunächst **eine neue Testwelt**. Wenn du eine v
 
 ### 5. Die Vögel finden
 
-Gehe **tagsüber in der Oberwelt** auf eine freie Fläche und schaue nach oben. Über dir sollte genügend freier Himmel sein; vermeide zunächst Dächer, dichte Baumkronen und Felsüberhänge. Nach ungefähr fünf Sekunden sollte eine Gruppe auftauchen. Direkt bei Sonnenaufgang oder kurz vor Sonnenuntergang ist der Controller noch beziehungsweise schon inaktiv.
+Gehe **tagsüber in der Oberwelt** auf eine freie Fläche und schaue nach oben. Über dir sollte genügend freier Himmel sein; vermeide zunächst Dächer, dichte Baumkronen und Felsüberhänge. Nach ungefähr fünf Sekunden sollte eine Gruppe auftauchen. Direkt bei Sonnenaufgang oder kurz vor Sonnenuntergang sind die Tagvögel noch beziehungsweise schon inaktiv.
 
 Eine vollständige Gruppe enthält **zwei Raben, eine Blaumeise, ein Rotkehlchen, einen Stieglitz und einen Steinadler**. Der Adler fliegt höher als die übrigen Vögel. Sie kreisen über einem festen Bereich und folgen dir nicht. Du musst keine Gegenstände herstellen und keine Befehle eingeben.
 
-Bei Nacht sowie im Nether und im Ende erscheinen keine neuen Gruppen. Dass die Vögel keine eigenen Geräusche machen, ist beabsichtigt.
+**Neu im Entwicklungsstand:** In der Dämmerung und nachts kannst du an einem Waldrand nach Eulen und Uhus Ausschau halten. Der Controller sucht in der Nähe zwei freie Sitzplätze auf Laubblöcken. Ohne passende Baumkronen erscheint keine Nachtgruppe. Eule und Uhu wechseln zwischen Sitzen mit angelegten Flügeln, Abheben, einem kleinen Rundflug und Landen. Ihre roten Augen sind selbstleuchtend; sie beleuchten keine umliegenden Blöcke. Wie der Effekt in deiner Bedrock-Grafikeinstellung aussieht, muss noch im Spiel geprüft werden.
+
+Die [zusätzliche Windows-Checkliste für Eulen und Uhus](docs/OWL_VALIDATION.md) beschreibt die Prüfung von Sitzplätzen, Leuchtaugen, Animationen und Tag-/Nachtwechsel.
+
+Im Nether und im Ende erscheinen weiterhin keine Gruppen. Dass alle Vögel einschließlich Eulen und Uhus keine eigenen Geräusche machen, ist beabsichtigt.
 
 ## Wenn etwas nicht funktioniert
 
@@ -74,6 +78,7 @@ Bei Nacht sowie im Nether und im Ende erscheinen keine neuen Gruppen. Dass die V
 | Das Paket fehlt in den Welteinstellungen. | Prüfe, ob der Import erfolgreich war und ob du Minecraft für Windows verwendest. Verlasse die Welteinstellungen und öffne sie erneut. |
 | Das Paket ist importiert, aber es erscheinen keine Vögel. | Kontrolliere beide Pakete unter „Aktiv“ in dieser Welt. Teste tagsüber auf einer freien Fläche in der Oberwelt und warte einige Sekunden. |
 | Vögel fehlen teilweise oder verschwinden wieder. | Gruppen werden regelmäßig ersetzt. Hindernisse oder nicht geladene Bereiche können einzelne Vögel verhindern. Pro Controller sind höchstens 18 geladene Vögel vorgesehen. |
+| Nachts erscheinen keine Eulen oder Uhus. | Prüfe, ob du einen Build mit der neuen Funktion verwendest (der alte Kandidat 0.1.1 enthält sie nicht). Teste in der Oberwelt an einem Waldrand mit freien Baumkronen; Dächer, zu hohe Bäume oder fehlende geladene Sitzplätze verhindern Nachtgruppen. |
 | Modelle, Texturen oder Bewegungen sehen falsch aus. | Prüfe das Ressourcenpaket und teste in einer neuen Welt nur mit den beiden Vogelpaketen. Die Darstellung im Spiel ist für diese Testversion noch nicht abgenommen. |
 
 Wenn der Fehler bleibt, halte **Minecraft-Version, Add-on-Version, Fehlermeldung und die anderen aktiven Pakete** fest. Die ausführliche Prüfanleitung steht in [VALIDATION.md](docs/VALIDATION.md).
@@ -93,16 +98,20 @@ Wenn der Fehler bleibt, halte **Minecraft-Version, Add-on-Version, Fehlermeldung
 | Rotkehlchen | Orangefarbene Brust und braunes Gefieder; kleiner, lebhafter Flug. |
 | Stieglitz | Roter Kopf und gelbe Flügelzeichnung; schnelle Flügelschläge. |
 | Ein Steinadler | Braunes Gefieder, goldener Kopf, breite Schwingen mit einzelnen Federspitzen; weite Kreise über den kleineren Vögeln. |
+| Eule (neu) | Kompakter Körper, runder Gesichtsschleier und rote Leuchtaugen; nachts Wechsel zwischen Baumkrone und Rundflug. |
+| Uhu (neu) | Größer als die Eule, mit markanten Federohren und roten Leuchtaugen; sitzt und fliegt in der Dämmerung und nachts. |
 
-Eine Gruppe besteht aus sechs Vögeln. Nahe Spieler teilen sich eine Gruppe; höchstens drei Gruppen bzw. **18 gleichzeitig geladene Vögel** werden durch den Controller erzeugt. Vögel entstehen nur tagsüber in der Oberwelt, zwischen Tageszeit-Tick 500 und 11500. Bei Nacht werden aktive Vögel entfernt; Nether und Ende erhalten keine Schwärme. Bei mehr als drei weit getrennten Spielern wechselt die Vergabe freier Gruppen, damit nicht dauerhaft dieselben Spieler leer ausgehen. Regen wird in dieser Version noch nicht gesondert berücksichtigt.
+Eine Taggruppe besteht aus sechs Vögeln; eine Nachtgruppe aus einer Eule und einem Uhu. Nahe Spieler teilen sich eine Gruppe; höchstens drei Gruppen und insgesamt **18 gleichzeitig geladene Vögel** werden durch den Controller erzeugt. Tagsüber sind damit bis zu 18 Vögel, nachts bis zu sechs Eulen/Uhus vorgesehen. Die Tagvögel sind zwischen Tageszeit-Tick 500 und vor 11500 aktiv. Von Tick 11500 über die Nacht bis vor Tick 500 übernehmen Eulen und Uhus. Beim Wechsel wird die vorherige Gruppe entfernt. Nether und Ende erhalten keine Schwärme. Bei mehr als drei weit getrennten Spielern wechselt die Vergabe freier Gruppen, damit nicht dauerhaft dieselben Spieler leer ausgehen. Regen wird in dieser Version noch nicht gesondert berücksichtigt.
 
 Die Flugbahnen bleiben an einem festen Ort in der Landschaft. Die Vögel verfolgen den Spieler nicht. Bei Ortswechsel, Dimensionswechsel oder Verlassen der Welt wird aufgeräumt. Eine Gruppe lebt höchstens 45 Sekunden und kann danach ersetzt werden. Es kann dadurch einen sichtbaren Wechsel geben. Felsüberhänge, Gebäude oder nicht geladene Bereiche können dazu führen, dass weniger Vögel erscheinen oder ein Vogel vorzeitig verschwindet.
+
+Eulen und Uhus nutzen einen 40-Sekunden-Zyklus: zunächst sitzen, über sechs Sekunden aufsteigen, einen 14-sekündigen Kreis fliegen, über sechs Sekunden landen und wieder sitzen. Die beiden Tiere beginnen versetzt, sodass Flug und Sitzen gleichzeitig sichtbar sein können. Sitzplätze werden regelmäßig erneut geprüft; verschwindet das Laub oder wird der Platz blockiert, wird der betroffene Vogel entfernt. Auch gesetzte Laubblöcke können als Sitzplatz dienen, weil der Controller die Blöcke prüft und keine vollständigen Bäume rekonstruiert.
 
 Die Vögel haben keine Angriffe, Zähmung, Beute, Erfahrungspunkte oder Fortpflanzung. Sie verändern keine Blöcke. Es sind zusätzliche Entitäten, deshalb ist das Add-on mehr als eine reine Shader-Einstellung. Eigene Geräuschdateien, Sound-Ereignisse und geerbte Papageien-Geräusche sind nicht enthalten; andere Minecraft-Geräusche werden nicht stummgeschaltet.
 
 ## Leistung und technische Grenzen
 
-Die Modelle bestehen aus wenigen Quadern und verwenden je eine 64 × 16 Pixel große Farbpalette. Die Flügel bewegen sich durch clientseitige Molang-Animationen. Ein Skript setzt Flugposition und Blickrichtung mit kleinen `tryTeleport`-Schritten pro Spieltick. Ob der Bedrock-Client diese Schritte ausreichend flüssig darstellt, ist Teil der noch offenen Sichtprüfung.
+Die Modelle bestehen aus wenigen Quadern und verwenden je eine 64 × 16 Pixel große Farbpalette. Die Flügel bewegen sich durch clientseitige Molang-Animationen. Für die Nachtvögel wird der Sitzstatus an den Client übertragen; ein Animationscontroller blendet die Flug- und Sitzpose ineinander. Die Eulenpaletten verwenden TGA-Texturen mit einer Emissionsmaske nur für die Augen. Ein Skript setzt Flugposition und Blickrichtung mit kleinen `tryTeleport`-Schritten pro Spieltick. Ob der Bedrock-Client diese Schritte ausreichend flüssig darstellt, ist Teil der noch offenen Sichtprüfung.
 
 Alle fünf Sekunden prüft der Controller Spielernähe, freie Bereiche und verwaiste Vögel. Er erzeugt keine Ticking Areas und lädt keine Chunks absichtlich nach. Zusätzlich entfernt ein nativer 60-Sekunden-Timer Vögel, wenn das Skript ausfällt. Dieser Timer zählt nur, während die Entität simuliert wird. Entitäten in entladenen Chunks sind weder vollständig zählbar noch sofort entfernbar; nach dem Laden werden sie vom Controller entfernt. Das Limit von 18 bezieht sich deshalb auf geladene Entitäten.
 
@@ -136,5 +145,6 @@ Die eigene Repository-CI prüft das Add-on unabhängig vom Grafikprojekt. Tags n
 - [Stabile Script API 2.0.0 in Bedrock 1.21.90](https://www.minecraft.net/it-it/article/minecraft-1-21-90-bedrock-changelog)
 - [Pack-Manifest und Script-Abhängigkeiten](https://learn.microsoft.com/minecraft/creator/reference/content/addonsreference/packmanifest?view=minecraft-bedrock-stable)
 - [Dimension: Entitäten und Geländeabfragen](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/dimension?view=minecraft-bedrock-stable), [Entity](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/entity?view=minecraft-bedrock-stable), [TeleportOptions](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/teleportoptions?view=minecraft-bedrock-stable)
+- [Emissive Materialien](https://learn.microsoft.com/en-us/minecraft/creator/documents/material-files?view=minecraft-bedrock-stable), [synchronisierte Entity Properties](https://learn.microsoft.com/en-us/minecraft/creator/documents/introductiontoentityproperties?view=minecraft-bedrock-stable)
 - [Clientseitige Animationen](https://learn.microsoft.com/en-us/minecraft/creator/documents/animations/animationsoverview?view=minecraft-bedrock-stable)
 - [Timer](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/entityreference/examples/entitycomponents/minecraftcomponent_timer?view=minecraft-bedrock-stable), [Instant Despawn](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/entityreference/examples/entitycomponents/minecraftcomponent_instant_despawn?view=minecraft-bedrock-stable), [Damage Sensor](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/entityreference/examples/entitycomponents/minecraftcomponent_damage_sensor?view=minecraft-bedrock-stable)

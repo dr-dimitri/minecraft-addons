@@ -1,0 +1,32 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.lumen_birds.nocturnal": {
+      "initial_state": "flight",
+      "states": {
+        "flight": {
+          "animations": [
+            "flight"
+          ],
+          "blend_transition": 0.35,
+          "transitions": [
+            {
+              "perch": "query.property('lumen_birds:perched')"
+            }
+          ]
+        },
+        "perch": {
+          "animations": [
+            "perch"
+          ],
+          "blend_transition": 0.35,
+          "transitions": [
+            {
+              "flight": "!query.property('lumen_birds:perched')"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -3,5 +3,7 @@
   "textures/entity/lumen_birds/blue_tit",
   "textures/entity/lumen_birds/robin",
   "textures/entity/lumen_birds/goldfinch",
-  "textures/entity/lumen_birds/eagle"
+  "textures/entity/lumen_birds/eagle",
+  "textures/entity/lumen_birds/owl",
+  "textures/entity/lumen_birds/eagle_owl"
 ]

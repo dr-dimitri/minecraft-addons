@@ -3,3 +3,5 @@ entity.lumen_birds:blue_tit.name=Blaumeise
 entity.lumen_birds:robin.name=Rotkehlchen
 entity.lumen_birds:goldfinch.name=Stieglitz
 entity.lumen_birds:eagle.name=Steinadler
+entity.lumen_birds:owl.name=Eule
+entity.lumen_birds:eagle_owl.name=Uhu

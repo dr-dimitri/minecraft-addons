@@ -11,6 +11,20 @@
       "textures": [
         "Texture.default"
       ]
+    },
+    "controller.render.lumen_birds.nocturnal": {
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        },
+        {
+          "eyes": "Material.eyes"
+        }
+      ],
+      "textures": [
+        "Texture.default"
+      ]
     }
   }
 }
