@@ -23,8 +23,12 @@ SOURCE_PATTERNS = (
 
 def source_files(root=ROOT):
     root = Path(root).resolve()
-    paths = {path for pattern in SOURCE_PATTERNS for path in root.glob(pattern)
-             if path.is_file() or path.is_symlink()}
+    paths = set()
+    for pattern in SOURCE_PATTERNS:
+        # Python 3.10 glob hides dangling links for literal patterns. Inspect
+        # those directly so supported Python versions reject the same inputs.
+        candidates = root.glob(pattern) if any(c in pattern for c in "*?[") else (root / pattern,)
+        paths.update(path for path in candidates if path.is_file() or path.is_symlink())
     for path in sorted(paths):
         relative = path.relative_to(root)
         # Never dereference a symlink into a private directory, even if the name
