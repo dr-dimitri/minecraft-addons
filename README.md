@@ -4,6 +4,8 @@ Optionales Vogel-Add-on für Minecraft Bedrock unter Windows, **Testversion 0.1.
 
 **Lokal geprüft, noch nicht in Minecraft ausgeführt.** Auf diesem Mac stehen Minecraft für Windows und die RX 9060 XT nicht zur Verfügung. Import, Animationen, Geräuschfreiheit im Spiel und Bildrate sind daher noch auf dem Ziel-PC zu prüfen. Die Modelle sind bewusst im kantigen Minecraft-Stil gestaltet; es sind keine fotorealistischen Tiermodelle.
 
+Zum Testen des vorhandenen Kandidaten gibt es eine [Windows-Checkliste für 0.1.1](docs/releases/0.1.1-windows-checklist.md) mit Dateinamen, Prüfsummen und Feldern für deine Ergebnisse.
+
 ![Originale Modellgeometrie, außerhalb von Minecraft gerendert](docs/PREVIEW.svg)
 
 ## Installation in Minecraft Bedrock unter Windows

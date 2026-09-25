@@ -74,6 +74,21 @@ den Quellen committen. Die CI erkennt auch neu erzeugte, nicht versionierte Date
 
 Vor einem Kandidaten zusätzlich:
 
+Die folgenden Kontrollen führt `scripts/check_candidate.py` gemeinsam aus.
+Im Git-Checkout verlangt es einen sauberen, vollständig eingecheckten Stand;
+die Versionsnummer im Beispiel durch die des Kandidaten ersetzen:
+
+```sh
+python3 scripts/check_candidate.py --tag birds-v0.1.1
+```
+
+Ohne `--tag` eignet es sich auch für normale Entwicklungscommits. Es prüft
+alle versionierten Dateien gegen die Source-ZIP-Dateiliste, vergleicht die
+Archivbytes mit den Quellen und lehnt fremde Altdateien in `dist/` ab.
+Vorhandene lokale Dateien werden dabei nicht automatisch gelöscht. Die
+Reproduzierbarkeit wird innerhalb derselben Python-/zlib-Umgebung geprüft;
+verschiedene Laufzeitkombinationen müssen untereinander nicht bytegleich bauen.
+
 - Den vollständigen Build im selben sauberen Quellbestand und derselben
   Python-/zlib-Umgebung wiederholen. SHA-256 jedes erzeugten Archivs zwischen
   beiden Läufen vergleichen. Archiv-Unittests allein belegen keinen vollständigen
@@ -95,10 +110,16 @@ Vor einem Kandidaten zusätzlich:
 
 `.github/workflows/build.yml` prüft bei Push und Pull Request die
 Versionskonsistenz, Python- und JS-Tests, generierten Ausgaben und Prüfsummen,
-baut das Add-on und lädt seine CI-Artefakte hoch. Auf einem Release-Tag kommt
+den vollständigen Wiederholungsbuild und den eigenständigen Source-ZIP-Neubau.
+Die Matrix verwendet Python 3.10 / Node 20 sowie Python 3.14 / Node 24; beide
+Jobs geben ihre konkreten Laufzeitversionen aus und müssen erfolgreich sein.
+Nur Python 3.14 / Node 24 lädt das Artefakt `lumen-silent-birds` hoch, damit die
+Release-Dateien aus einer eindeutig festgelegten Umgebung stammen. Auf einem Release-Tag kommt
 die strikte Tag-/Changelogprüfung hinzu. Erfolgreiche `birds-vX.Y.Z`-Tags
 erzeugen einen **Entwurf**, keine öffentliche Freigabe. Die Pakete werden aus
-dem geprüften CI-Lauf übernommen und nicht im Releasejob neu gebaut.
+dem geprüften CI-Lauf übernommen und nicht im Releasejob neu gebaut. Der
+Releasejob wartet auf beide Matrixkombinationen. Ein einzelner grüner Matrixjob
+genügt nicht zur Freigabe des Entwurfsjobs.
 
 Beispiel für die lokale Tagprüfung (Version an den Kandidaten anpassen):
 

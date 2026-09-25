@@ -2,7 +2,16 @@
 
 ## [Unreleased]
 
-- Noch keine weiteren Änderungen.
+- CI prüft die Mindestversionen Python 3.10 / Node 20 und zusätzlich Python 3.14 /
+  Node 24. Beide Kombinationen müssen vor der Release-Entwurfserstellung bestehen.
+- Neues Kandidatengate automatisiert Wiederholungsbuild, Prüfsummen, Prüfung der
+  eingebetteten Packs und vollständigen Quellen sowie Tests und Neubau aus dem
+  Source-ZIP ohne Git-Checkout.
+- Windows-Checkliste für den unveränderten Kandidaten 0.1.1 ergänzt. Die Prüfung
+  im Spiel bleibt offen und wird vom Nutzer am Windows-PC durchgeführt.
+- Vorgehensweise bei Änderungen in `AGENTS.md` dokumentiert: belegbare Bugfixes,
+  passende Prüfungen, Review, autorisierter Commit/Push und überprüfte Releases
+  mit klarer Trennung zwischen Entwurf, öffentlicher Testversion und Freigabe.
 
 ## [0.1.1] - Kandidat
 

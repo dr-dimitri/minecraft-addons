@@ -6,14 +6,34 @@ permissions:
   contents: read
 jobs:
   build:
+    name: Python ${{ matrix.python-version }} / Node ${{ matrix.node-version }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python-version: '3.10'
+            node-version: '20'
+            upload-artifacts: false
+          - python-version: '3.14'
+            node-version: '24'
+            upload-artifacts: true
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ matrix.node-version }}
+          package-manager-cache: false
       - name: Check Python and Node runtimes
         run: |
+          python3 --version
           python3 -c 'import sys; assert sys.version_info >= (3, 10), "Python 3.10+ required"'
           node --version
           node -e 'if (Number(process.versions.node.split(".")[0]) < 20) process.exit(1)'
+          npm --version
       - name: Check add-on version and release tag
         env:
           REF_TYPE: ${{ github.ref_type }}
@@ -32,9 +52,9 @@ jobs:
         run: python3 -m unittest discover -s tests -v
       - name: Test bird behavior
         run: npm test
-      - name: Build add-on
+      - name: Check repeatable builds, archives and standalone source rebuild
         run: |
-          python3 scripts/build.py
+          python3 scripts/check_candidate.py
           python3 scripts/check_release.py
       - name: Reject generated drift, including untracked files
         run: |
@@ -47,7 +67,8 @@ jobs:
       - name: Check archive hashes
         working-directory: dist
         run: sha256sum -c SHA256SUMS.txt
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: matrix.upload-artifacts
         with:
           name: lumen-silent-birds
           path: |
@@ -63,7 +84,7 @@ jobs:
       contents: write
       actions: read
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Validate exact tag before creating release
         env:
           RELEASE_TAG: ${{ github.ref_name }}
