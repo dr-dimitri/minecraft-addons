@@ -12,6 +12,7 @@ function fixture(playerCount = 1, spacing = 200) {
     id: 'minecraft:overworld', heightRange: {min: -64, max: 320},
     surface: 63, loaded: true, air: true, spawnCount: 0, failSpawnAt: 0, failTeleportAt: 0,
     removalFails: false, blockTeleports: false, failProperty: false, trees: new Map(), blocked: new Set(),
+    passable: new Set(),
     getTopmostBlock({x, z}) {
       if (!this.loaded) throw new Error('Unloaded chunk');
       const tree = this.trees.get(x + ',' + z);
@@ -21,8 +22,22 @@ function fixture(playerCount = 1, spacing = 200) {
       if (!this.loaded) return undefined;
       const tree = this.trees.get(x + ',' + z);
       if (tree?.y === y) return {isAir: false, typeId: tree.typeId};
+      if (this.passable.has([x, y, z].join(','))) return {isAir: false, typeId: 'minecraft:tall_grass'};
       if (this.blocked.has([x, y, z].join(','))) return {isAir: false, typeId: 'minecraft:stone'};
       return {isAir: this.air, typeId: this.air ? 'minecraft:air' : 'minecraft:stone'};
+    },
+    getBlockFromRay(at, direction, options) {
+      assert.deepEqual(direction, {x: 0, y: 1, z: 0});
+      assert.equal(options.includePassableBlocks, false);
+      assert.equal(options.includeLiquidBlocks, false);
+      assert.ok(options.maxDistance <= 1);
+      if (!this.loaded) throw new Error('Unloaded chunk');
+      const x = Math.floor(at.x), z = Math.floor(at.z);
+      for (let y = Math.floor(at.y); y <= Math.floor(at.y + options.maxDistance); y++) {
+        const block = this.getBlock({x, y, z});
+        if (!block.isAir && !this.passable.has([x, y, z].join(','))) return {block};
+      }
+      return undefined;
     },
     getEntities({type}) { return [...entities.values()].filter(e => e.typeId === type); },
     spawnEntity(typeId, location) {
@@ -112,6 +127,35 @@ test('players below a tree canopy can see night birds', () => {
   assert.equal(f.entities.size, 2);
 });
 
+test('a low roof below a canopy prevents night groups for crouching or swimming players', () => {
+  // An upper slab at y=65 leaves 1.5 blocks of clearance above feet at y=64.
+  // The canopy must not hide this roof from the outdoor check.
+  for (const feetY of [64, 64.19]) {
+    const f = fixture(); plantTrees(f);
+    f.world.players[0].location.y = feetY;
+    f.dim.trees.set('0,0', {y: 73, typeId: 'minecraft:oak_leaves'});
+    f.dim.blocked.add('0,65,0');
+    f.world.time = 18000; f.manager.tick(0);
+    assert.equal(f.entities.size, 0);
+    assert.equal(f.manager.groups.size, 0);
+  }
+});
+
+test('low roofs prevent day groups while tall grass remains allowed by day and night', () => {
+  const roof = fixture();
+  roof.dim.surface = 65; roof.dim.blocked.add('0,65,0');
+  roof.manager.tick(0);
+  assert.equal(roof.entities.size, 0);
+  for (const time of [6000, 18000]) {
+    const f = fixture(); plantTrees(f); f.world.time = time;
+    f.dim.passable.add('0,65,0');
+    if (time === 6000) f.dim.surface = 65;
+    else f.dim.trees.set('0,0', {y: 73, typeId: 'minecraft:oak_leaves'});
+    f.manager.tick(0);
+    assert.equal(f.entities.size, time === 6000 ? 6 : 2);
+  }
+});
+
 test('a single small tree crown provides two perches even with only one coarse grid hit', () => {
   const f = fixture();
   for (let x = 2; x <= 6; x++) for (let z = 2; z <= 6; z++) {
@@ -121,6 +165,21 @@ test('a single small tree crown provides two perches even with only one coarse g
   assert.equal(f.entities.size, 2);
   const perches = [...f.manager.flights.values()].map(flight => flight.perch);
   assert.ok(distanceSquared(...perches) >= 4);
+});
+
+test('an unsuitable lower tree does not prevent two perches on a usable tall crown', () => {
+  for (const lowerTree of [false, true]) {
+    const f = fixture();
+    for (let x = 2; x <= 6; x++) for (let z = 2; z <= 6; z++) {
+      f.dim.trees.set(x + ',' + z, {y: 88, typeId: 'minecraft:spruce_leaves'});
+    }
+    if (lowerTree) f.dim.trees.set('-4,0', {y: 70, typeId: 'minecraft:oak_leaves'});
+    f.world.time = 18000; f.manager.tick(0);
+    assert.equal(f.entities.size, 2);
+    const perches = [...f.manager.flights.values()].map(flight => flight.perch);
+    assert.ok(perches.every(p => p.support.y === 88));
+    assert.ok(distanceSquared(...perches) >= 4);
+  }
 });
 
 test('owl takeoff, closed flight and landing stay continuous and return to the same perch', () => {

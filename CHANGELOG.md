@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+- Tag- und Nachtgruppen entstehen nicht mehr unter niedrigen Dächern, auch wenn
+  darüber Baumkronen liegen. Die Prüfung berücksichtigt den Block direkt über
+  den Füßen schleichender oder schwimmender Spieler und lässt hohes Gras zu.
+- Ungeeignete niedrige Bäume verhindern nicht mehr die Suche nach einem zweiten
+  Sitzplatz auf einer geeigneten höheren Baumkrone.
+- `npm test` nutzt die automatische Testsuche von Node, sodass der Aufruf auch
+  mit Node 20 unter Windows ohne Shell-Platzhalterauflösung funktioniert.
+
 - Eule und Uhu als eigene stumme Nachtvögel mit roten selbstleuchtenden Augen
   ergänzt. Sie wechseln in Dämmerung/Nacht zwischen Flug und Sitzen auf freien
   Laubblöcken; tagsüber bleiben die bisherigen fünf Arten aktiv.

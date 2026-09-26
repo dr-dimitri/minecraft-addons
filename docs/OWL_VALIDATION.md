@@ -19,11 +19,16 @@ Animationsübergänge und tatsächliche Flugruhe in Minecraft Bedrock.
 3. Zur Dämmerung an einen Waldrand gehen. Ab Tick 11500 soll eine Nachtgruppe
    mit einer Eule und einem größeren Uhu entstehen; die Tagvögel verschwinden.
    Auch direkt unter einer freien Baumkrone testen. In geschlossenen Gebäuden
-   und Höhlen unter Bäumen sollen keine neuen Gruppen entstehen.
+   und Höhlen unter Bäumen sollen keine neuen Gruppen entstehen. Zusätzlich
+   schleichend unter einer niedrigen Decke aus oberen Stufen mit Laub darüber
+   prüfen. Auch tagsüber darf dort keine Gruppe entstehen. Hohes Gras auf
+   freiem Gelände oder unter einer freien Baumkrone soll Gruppen weiter zulassen.
 4. Eine einzelne breite Baumkrone und einen Wald prüfen. Beide Tiere benötigen
    jeweils einen freien Laubplatz mit zwei Luftblöcken darüber. Fehlen passende
    Sitzplätze in der Nähe, darf keine Nachtgruppe entstehen. Dachziegel, Stein
-   oder andere feste Blöcke sind keine Sitzplätze.
+   oder andere feste Blöcke sind keine Sitzplätze. Eine geeignete hohe Krone
+   muss auch dann zwei Plätze liefern können, wenn ein deutlich niedrigerer
+   Nachbarbaum für die vorgesehene Flughöhe ungeeignet ist.
 5. Mindestens zwei Minuten beobachten: Sitzen mit angelegten Flügeln, sanftes
    Aufsteigen, Rundflug, Absenken und erneutes Sitzen. Füße sollen auf dem Laub
    stehen; keine dauerhaft schlagenden Flügel im Sitzen oder abgetrennten Körperteile.

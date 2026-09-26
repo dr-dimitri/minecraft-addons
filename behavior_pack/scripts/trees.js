@@ -10,6 +10,15 @@ export function isLeaves(block) {
   return LEAVES.has(block?.typeId);
 }
 
+// Test the otherwise tolerated block above the feet. A short collision ray
+// catches low slab roofs without treating tall grass or vines as ceilings.
+export function hasLowRoof(dimension, player) {
+  const at = player.location;
+  const hit = dimension.getBlockFromRay({x: at.x, y: Math.floor(at.y) + .999, z: at.z},
+    {x: 0, y: 1, z: 0}, {maxDistance: 1, includePassableBlocks: false, includeLiquidBlocks: false});
+  return Boolean(hit && !isLeaves(hit.block));
+}
+
 export function validPerch(dimension, perch) {
   return isLeaves(dimension.getBlock(perch.support))
     && [1, 2].every(dy => dimension.getBlock({
@@ -20,10 +29,11 @@ export function validPerch(dimension, perch) {
 export function findPerches(dimension, player) {
   const at = player.location;
   const center = dimension.getTopmostBlock({x: Math.floor(at.x), z: Math.floor(at.z)});
-  if (!center) return [];
+  if (!center || hasLowRoof(dimension, player)) return [];
   if (center.location.y > at.y + 1) {
     if (!isLeaves(center) || center.location.y > at.y + 24) return [];
     // Allow players under a canopy, but not in a cave/house below a tree.
+    // The low headroom band is covered separately without rejecting plants.
     for (let y = Math.floor(at.y) + 2; y < center.location.y; y++) {
       const block = dimension.getBlock({x: Math.floor(at.x), y, z: Math.floor(at.z)});
       if (!block || (!block.isAir && !isLeaves(block))) return [];
@@ -50,16 +60,19 @@ export function findPerches(dimension, player) {
     } catch { /* Unloaded columns are skipped; never force their chunks to load. */ }
   }
   for (const offset of offsets) inspect(Math.floor(at.x) + offset.x, Math.floor(at.z) + offset.z);
-  // A small tree crown may intersect the coarse grid only once. Search its
-  // immediate leaves too, rather than require a second separate tree.
-  if (candidates.length === 1) {
-    const {x, z} = candidates[0].support;
+  const reachable = perch => perch.y >= dimension.heightRange.min && highest + 8 - perch.y <= 24;
+  const usable = candidates.filter(reachable);
+  // A small crown may offer the only reachable coarse-grid perch. Unsuitable
+  // lower trees must not suppress the search for a second seat on that crown.
+  if (usable.length === 1) {
+    const {x, z} = usable[0].support;
     for (let dx = -2; dx <= 2; dx++) for (let dz = -2; dz <= 2; dz++) {
       if (dx * dx + dz * dz >= 4) inspect(x + dx, z + dz);
     }
   }
   const cruiseY = highest + 8;
   if (cruiseY + 2 >= dimension.heightRange.max) return [];
-  return candidates.filter(p => p.y >= dimension.heightRange.min && cruiseY - p.y <= 24)
+  // Neighbor probes can reveal higher terrain; recheck every perch afterward.
+  return candidates.filter(reachable)
     .slice(0, 2).map(p => ({...p, cruiseY}));
 }

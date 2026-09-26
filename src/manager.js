@@ -1,6 +1,6 @@
 import {SPECIES, FLOCK, NIGHT_FLOCK, MAX_BIRDS, MAX_GROUPS, LIFETIME_TICKS, INTEREST_DISTANCE,
   activityAt, distanceSquared, seedFor, positionAt, owlPositionAt} from './flight.js';
-import {findPerches, validPerch} from './trees.js';
+import {findPerches, validPerch, hasLowRoof} from './trees.js';
 
 // API access is injected so daylight, failures, reloads and caps can be tested.
 export class BirdManager {
@@ -53,7 +53,7 @@ export class BirdManager {
     const at = player.location;
     const center = dimension.getTopmostBlock({x: Math.floor(at.x), z: Math.floor(at.z)});
     // Tolerate low ground cover, but reject a normal ceiling two blocks above the feet.
-    if (!center || center.location.y > at.y + 1) return undefined;
+    if (!center || center.location.y > at.y + 1 || hasLowRoof(dimension, player)) return undefined;
     let ground = center.location.y;
     // Probe the route's vicinity, not just the player's column. Never load chunks.
     for (const x of [-30, 0, 30]) for (const z of [-30, 0, 30]) {
