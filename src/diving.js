@@ -17,8 +17,10 @@ export function isSubmarinePassenger(player) {
 
 export function wearsDivingSuit(player) {
   const equipment = player.getComponent('minecraft:equippable');
-  return equipment !== undefined && Object.entries(DIVING_SLOTS).every(
-    ([slot, item]) => equipment.getEquipment(slot)?.typeId === item);
+  // The helmet and air tanks provide breathing. Leg and foot armor
+  // must not disable the air supply, including older sets labeled as fins.
+  return equipment !== undefined && ['Head', 'Chest'].every(
+    slot => equipment.getEquipment(slot)?.typeId === DIVING_SLOTS[slot]);
 }
 
 function refreshEffect(player, name, duration) {

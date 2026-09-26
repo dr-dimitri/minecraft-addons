@@ -24,7 +24,19 @@
       ],
       "part_visibility": [
         {
-          "*": "!context.is_first_person"
+          "*": true
+        },
+        {
+          "head": "!context.is_first_person"
+        },
+        {
+          "body": "!context.is_first_person"
+        },
+        {
+          "rightLeg": "!context.is_first_person"
+        },
+        {
+          "leftLeg": "!context.is_first_person"
         }
       ]
     }

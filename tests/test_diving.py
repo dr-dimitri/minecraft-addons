@@ -8,7 +8,7 @@ import sys
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from diving import assets, binary_assets
+from diving import assets, binary_assets, translations
 from generate import ROOT
 from build import source_files
 
@@ -30,9 +30,40 @@ class DivingAssetsTests(unittest.TestCase):
             geometry = documents['resource_pack/models/entity/' + base + '.geo.json']['minecraft:geometry'][0]
             self.assertEqual(attachment['geometry']['default'], geometry['description']['identifier'])
             self.assertIn('resource_pack/' + attachment['textures']['default'] + '.png', images)
-            for bone in geometry['bones']:
-                self.assertIn(bone['binding'], ["'" + target + "'" for target in
-                              ('head', 'body', 'rightArm', 'leftArm', 'rightLeg', 'leftLeg')])
+
+    def test_suit_uses_player_armor_hierarchy_and_visible_first_person_sleeves(self):
+        documents = assets()
+        expected = {'waist': None, 'body': 'waist', 'head': 'body',
+                    'rightArm': 'body', 'leftArm': 'body', 'rightLeg': 'body', 'leftLeg': 'body'}
+        for part in ('helmet', 'chestplate', 'leggings', 'boots'):
+            with self.subTest(part=part):
+                model = documents['resource_pack/models/entity/diving_' + part + '.geo.json']['minecraft:geometry'][0]
+                bones = {bone['name']: bone for bone in model['bones']}
+                self.assertEqual({name: bone.get('parent') for name, bone in bones.items()}, expected)
+                for bone in bones.values():
+                    self.assertNotIn('binding', bone, 'Armor copies player bones; do not also bind them a second time')
+                attachment = documents['resource_pack/attachables/diving_' + part + '.json']['minecraft:attachable']['description']
+                self.assertEqual(attachment['materials']['default'], 'armor')
+                self.assertIn('parent_setup', attachment['scripts'])
+        controller = documents['resource_pack/render_controllers/diving.render_controllers.json']['render_controllers']['controller.render.lumen_birds.diving_suit']
+        visibility = dict(pair for rule in controller['part_visibility'] for pair in rule.items())
+        self.assertEqual(visibility['*'], True)
+        for name in ('head', 'body', 'rightLeg', 'leftLeg'):
+            self.assertEqual(visibility[name], '!context.is_first_person')
+        self.assertNotIn('rightArm', visibility)
+        self.assertNotIn('leftArm', visibility)
+
+    def test_boots_are_named_and_extend_outside_leggings_without_long_fins(self):
+        documents = assets()
+        self.assertEqual(translations('de_DE')['item.lumen_birds:diving_boots.name'], 'Taucherstiefel')
+        self.assertEqual(translations('en_US')['item.lumen_birds:diving_boots.name'], 'Diving boots')
+        model = documents['resource_pack/models/entity/diving_boots.geo.json']['minecraft:geometry'][0]
+        for side in ('rightLeg', 'leftLeg'):
+            cubes = next(bone['cubes'] for bone in model['bones'] if bone['name'] == side)
+            self.assertLessEqual(min(cube['origin'][2] for cube in cubes), -3)
+            self.assertGreaterEqual(min(cube['origin'][2] for cube in cubes), -4)
+            self.assertGreater(max(cube['origin'][1] + cube['size'][1] for cube in cubes), 5)
+            self.assertGreater(max(cube['size'][0] for cube in cubes), 4.6)
 
     def test_complete_rotating_submarine_and_seated_player_fit_water_envelope(self):
         documents = assets()

@@ -16,8 +16,16 @@
       },
       "bones": [
         {
-          "name": "diving_body",
-          "binding": "'body'",
+          "name": "waist",
+          "pivot": [
+            0,
+            12,
+            0
+          ]
+        },
+        {
+          "name": "body",
+          "parent": "waist",
           "pivot": [
             0,
             24,
@@ -471,8 +479,18 @@
           ]
         },
         {
-          "name": "diving_rightArm",
-          "binding": "'rightArm'",
+          "name": "head",
+          "parent": "body",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": []
+        },
+        {
+          "name": "rightArm",
+          "parent": "body",
           "pivot": [
             -5,
             22,
@@ -556,8 +574,8 @@
           ]
         },
         {
-          "name": "diving_leftArm",
-          "binding": "'leftArm'",
+          "name": "leftArm",
+          "parent": "body",
           "pivot": [
             5,
             22,
@@ -639,6 +657,26 @@
               }
             }
           ]
+        },
+        {
+          "name": "rightLeg",
+          "parent": "body",
+          "pivot": [
+            -1.9,
+            12,
+            0
+          ],
+          "cubes": []
+        },
+        {
+          "name": "leftLeg",
+          "parent": "body",
+          "pivot": [
+            1.9,
+            12,
+            0
+          ],
+          "cubes": []
         }
       ]
     }

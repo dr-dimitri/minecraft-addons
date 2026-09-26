@@ -86,7 +86,7 @@ Im Git-Checkout verlangt es einen sauberen, vollständig eingecheckten Stand;
 die Versionsnummer im Beispiel durch die des Kandidaten ersetzen:
 
 ```sh
-python3 scripts/check_candidate.py --tag birds-v0.2.1
+python3 scripts/check_candidate.py --tag birds-v0.2.2
 ```
 
 Ohne `--tag` eignet es sich auch für normale Entwicklungscommits. Es prüft
@@ -131,7 +131,7 @@ genügt nicht zur Freigabe des Entwurfsjobs.
 Beispiel für die lokale Tagprüfung (Version an den Kandidaten anpassen):
 
 ```sh
-python3 scripts/check_release.py --tag birds-v0.2.1
+python3 scripts/check_release.py --tag birds-v0.2.2
 ```
 
 Vor dem Tag das Review und die grüne CI des vorgesehenen Commits prüfen.

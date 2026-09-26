@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [0.2.2] - Kandidat
+
+- Atemschutz und Nachtsicht benötigen jetzt Helm und Oberteil mit Luftflaschen.
+  Fehlende Hose oder Fußausrüstung schaltet die Luftversorgung nicht mehr ab.
+  Auffrischen, Ablegen, Milch und Wiederladen sind durch Regressionstests geprüft.
+- Taucherstiefel mit hohem Schaft, goldener Manschette, fester Sohle und eigenem
+  Inventarsymbol ersetzen die bisherigen Schwimmflossen. Die Gegenstands-ID
+  bleibt erhalten; vorhandene Ausrüstung und Dorftruhen verwenden dieselben Teile.
+- Anzugdarstellung auf das Bedrock-Rüstungsskelett mit passenden Körperknochen,
+  Elternknochen und Rüstungsmaterial umgestellt. Die Ärmel werden in erster Person
+  nicht mehr pauschal ausgeblendet. Sichtbarkeit und Bewegung auf dem Avatar
+  benötigen noch die tatsächliche Windows-/Bedrock-Abnahme.
+
 ## [0.2.1] - Kandidat
 
 - Drei Spawn-Lücken behoben: Fische finden kleine freie Becken auch zwischen

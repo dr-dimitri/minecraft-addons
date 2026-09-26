@@ -4,13 +4,16 @@
     "description": {
       "identifier": "lumen_birds:diving_boots",
       "materials": {
-        "default": "entity_alphatest"
+        "default": "armor"
       },
       "textures": {
         "default": "textures/entity/lumen_birds/diving_palette"
       },
       "geometry": {
         "default": "geometry.lumen_birds.diving_boots"
+      },
+      "scripts": {
+        "parent_setup": "variable.boot_layer_visible = 0.0;"
       },
       "render_controllers": [
         "controller.render.lumen_birds.diving_suit"

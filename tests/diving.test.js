@@ -40,17 +40,52 @@ function fixture() {
   return {world, dimension, player, boat, equipment, manager, equip};
 }
 
-test('only the complete diving set supplies breathing and vision outside the submarine', () => {
+test('helmet and air tanks supply breathing and vision without leggings or boots', () => {
   const f = fixture(); f.boat.riders = [];
   f.manager.tick(0); assert.equal(f.player.effects.size, 0);
   f.equip(); assert.equal(wearsDivingSuit(f.player), true);
   f.manager.tick(1);
   assert.equal(f.player.effects.get('water_breathing').duration, 300);
   assert.equal(f.player.effects.get('night_vision').duration, 600);
-  f.equipment.delete('Feet'); f.player.effects.clear();
-  f.manager.tick(2); assert.equal(f.player.effects.size, 0);
+  f.equipment.delete('Feet'); f.equipment.delete('Legs'); f.player.effects.clear();
+  f.manager.tick(2); assert.equal(f.player.effects.get('water_breathing')?.duration, 300);
   f.equipment.set('Feet', {typeId: 'minecraft:iron_boots'});
-  assert.equal(wearsDivingSuit(f.player), false);
+  assert.equal(wearsDivingSuit(f.player), true);
+});
+
+test('air supply requires the actual helmet and tanks in their armor slots', () => {
+  for (const missing of ['Head', 'Chest']) {
+    const f = fixture(); f.boat.riders = []; f.equip();
+    f.equipment.delete(missing);
+    f.manager.tick(0); assert.equal(f.player.effects.size, 0);
+    f.equipment.set(missing, {typeId: missing === 'Head' ? 'minecraft:iron_helmet' : 'minecraft:iron_chestplate'});
+    f.manager.tick(1); assert.equal(f.player.effects.size, 0);
+    f.equipment.set('Mainhand', {typeId: DIVING_SLOTS[missing]});
+    f.manager.tick(2); assert.equal(f.player.effects.size, 0);
+  }
+});
+
+test('diving air supply remains active over time and resumes after milk and reload', () => {
+  const f = fixture(); f.boat.riders = [];
+  // Use actual slot and item identifiers independently of the controller mapping.
+  f.equipment.set('Head', {typeId: 'lumen_birds:diving_helmet'});
+  f.equipment.set('Chest', {typeId: 'lumen_birds:diving_chestplate'});
+  for (let tick = 0; tick < 1500; tick++) {
+    if (tick === 400) f.player.effects.clear();
+    if (tick === 800) f.manager = new DivingAdventure(f.world);
+    f.manager.tick(tick);
+    for (const name of ['water_breathing', 'night_vision']) {
+      const effect = f.player.effects.get(name);
+      assert.ok(effect?.duration > 1, name + ' must not expire while equipped');
+      effect.duration--;
+    }
+  }
+  f.equipment.delete('Chest');
+  for (let tick = 1500; tick < 2200; tick++) {
+    for (const [name, effect] of f.player.effects) if (--effect.duration <= 0) f.player.effects.delete(name);
+    f.manager.tick(tick);
+  }
+  assert.equal(f.player.effects.size, 0, 'Protection expires after removing the tanks');
 });
 
 test('longer and stronger external effects are preserved and removed equipment stops refreshing', () => {

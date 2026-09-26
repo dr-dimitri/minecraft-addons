@@ -42,8 +42,16 @@ Ausstattung werden für jeden Standort getrennt gespeichert.
 Fertige und verschluckte Dörfer werden nicht automatisch neu aufgebaut.
 
 - **Taucheranzug:** Truhe im westlichen Haus, ungefähr **X −13, Y 64, Z −1**.
-  Helm, Oberteil mit Luftflaschen, Hose und Flossen in die vier Rüstungsplätze
-  anlegen. Das vollständige Set gibt Wasseratmung und Nachtsicht.
+  Helm, Oberteil mit Luftflaschen, Hose und Taucherstiefel in die vier
+  Rüstungsplätze anlegen. **Helm und Luftflaschen zusammen** geben dauerhaft
+  Wasseratmung und Nachtsicht in der Oberwelt; Hose und Stiefel sind dafür
+  nicht erforderlich. Das Tragen in der Hand oder im Inventar genügt nicht.
+  Nach dem Ablegen laufen die vom Anzug gewährten Effekte aus (höchstens
+  15 Sekunden Wasseratmung und 30 Sekunden Nachtsicht). Längere Trankeffekte
+  bleiben erhalten. Milch entfernt die Effekte kurzzeitig; bei
+  angelegtem Helm und Oberteil werden sie im nächsten Tick erneuert.
+  Die bisher „Schwimmflossen“ genannten Gegenstände werden beim Paketupdate
+  unter derselben ID als Taucherstiefel angezeigt; keine neue Welt ist nötig.
   Brot und ein Steinschwert dienen als Starthilfe für die ersten Tauchgänge.
 - **U-Boot:** Unter Wasser am Südoststeg, ungefähr **X 13, Y 60, Z 23**.
   Hineinschwimmen und mit dem Boot interagieren. Bewegen und dabei in die
@@ -58,6 +66,13 @@ dem Aussteigen bleiben die kurzen Atem- und Sichteffekte zunächst erhalten.
 Es braucht weder Treibstoff noch Munition. Das Boot bewegt sich nur durch
 geprüften Wasserraum und hält vor Hindernissen beziehungsweise fehlenden Chunks.
 Bedienung und Darstellung in erster und dritter Person bleiben im Spiel zu prüfen.
+Die vier Anzugmodelle verwenden die Körperknochen der Bedrock-Rüstung. In der
+Ich-Perspektive sind die Ärmel vorgesehen; Helm, Rumpf und Beine werden dort
+ausgeblendet, damit die Kamera frei bleibt. In dritter Person und der
+Inventarvorschau ist der vollständige ausgerüstete Anzug vorgesehen.
+
+Technische Referenzen: [Bedrock-Attachables](https://learn.microsoft.com/en-us/minecraft/creator/documents/attachables?view=minecraft-bedrock-stable)
+und das [offizielle Rüstungsskelett für Bedrock 1.21.110](https://github.com/Mojang/bedrock-samples/blob/v1.21.110.2/resource_pack/models/entity/player_armor.json).
 
 ## Wenn das Tiefenmaul ein Dorf verschluckt
 
@@ -149,8 +164,16 @@ stammen aus Minecraft; Tiefe, Dörfer und Abenteuer werden mitgeliefert.
 - [ ] Drei Häuser, Stege, Truhe, zwei Dorfbewohner und genau ein Startboot erscheinen.
 - [ ] Alle vier Standorte besitzen eigene Ausrüstung und Boote; entfernte Dörfer
       entstehen erst beim Besuch. Gleichzeitige Besuche blockieren einander nicht.
-- [ ] Vier Anzugteile lassen sich anlegen und sind in dritter Person sichtbar.
-- [ ] Atemschutz und Nachtsicht gelten nur mit vollständigem Anzug bzw. im Boot.
+- [ ] Vier Anzugteile einschließlich Taucherstiefeln lassen sich anlegen und sind
+      in dritter Person und im Inventar sichtbar (klassischer und schmaler Skin).
+      Ärmel bleiben in erster Person sichtbar; der Helm verdeckt die Kamera nicht.
+- [ ] Helm, Luftflaschen, Hose und Stiefel folgen Gehen, Schleichen und Schwimmen.
+- [ ] Helm und Luftflaschen schützen auch ohne Hose/Stiefel über einen längeren
+      Tauchgang vor Luftverlust. Helm oder Oberteil allein reicht nicht aus.
+      Nach Ablegen läuft der Schutz aus; nach Milch und Wiederladen kehrt er zurück.
+      U-Boot-Insassen erhalten den Schutz weiterhin ohne Anzug.
+- [ ] Paketupdate ersetzt vorhandene Flossen durch Stiefeldarstellung und Namen;
+      Inventar, Ausrüstung und Vorratstruhen bleiben erhalten.
 - [ ] Einsteigen, Tauchen, Drehen, Hindernisse, Aussteigen und Wiederladen funktionieren.
 - [ ] Mutanten greifen Schwimmer an; Anzug allein verhindert keinen Schaden;
       Bootsinsassen und Creative-/Spectator-Spieler werden nicht angegriffen.

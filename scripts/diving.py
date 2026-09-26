@@ -6,7 +6,7 @@ ITEMS = {
     'diving_helmet': ('head', 'Taucherhelm', 'Diving helmet'),
     'diving_chestplate': ('chest', 'Tauchanzug mit Luftflaschen', 'Diving suit with air tanks'),
     'diving_leggings': ('legs', 'Taucherhose', 'Diving leggings'),
-    'diving_boots': ('feet', 'Schwimmflossen', 'Diving fins'),
+    'diving_boots': ('feet', 'Taucherstiefel', 'Diving boots'),
 }
 PALETTE = ('eebd36', 'ffe07b', '283f50', '75d9dd', 'f4f3dc', 'a0772c', '172934', 'df7557')
 
@@ -52,9 +52,11 @@ def submarine_geometry():
 
 
 def suit_geometry(name):
-    # Direct model binding follows the player's pose without copying its skin.
+    # Armor copies the player's bone transforms by name, including waist/body
+    # motion when swimming or sneaking. Keep empty parents, but no skin cubes.
     def bone(label, pivot, cubes):
-        return {'name': 'diving_' + label, 'binding': "'" + label + "'", 'pivot': pivot, 'cubes': cubes}
+        return {'name': label, 'parent': 'waist' if label == 'body' else 'body',
+                'pivot': pivot, 'cubes': cubes}
     if name == 'diving_helmet':
         bones = [bone('head', [0, 24, 0], [
             cube([-4.7, 23.5, -4.7], [9.4, 9.4, 9.4], 0),
@@ -76,9 +78,17 @@ def suit_geometry(name):
         bones = []
         for side, x in (('rightLeg', -4.3), ('leftLeg', -.3)):
             cubes = ([cube([x, -.3, -2.3], [4.6, 12.6, 4.6], 2)] if name == 'diving_leggings' else
-                     [cube([x, -.5, -7], [4.6, 2, 9.7], 0), cube([x, -.4, -2.4], [4.6, 4, 4.8], 2)])
-            bones.append(bone(side, [-2 if side == 'rightLeg' else 2, 12, 0], cubes))
-    return geometry(name, bones, width=3, height=4)
+                     [cube([x - .2, -.6, -3.6], [5, 1.6, 6.2], 5),
+                      cube([x - .2, 1, -2.6], [5, 5.2, 5.2], 2),
+                      cube([x - .3, 5, -2.7], [5.2, 1.2, 5.4], 0)])
+            bones.append(bone(side, [-1.9 if side == 'rightLeg' else 1.9, 12, 0], cubes))
+    parts = {part['name']: part for part in bones}
+    skeleton = [{'name': 'waist', 'pivot': [0, 12, 0]}]
+    for label, pivot in (('body', [0, 24, 0]), ('head', [0, 24, 0]),
+                         ('rightArm', [-5, 22, 0]), ('leftArm', [5, 22, 0]),
+                         ('rightLeg', [-1.9, 12, 0]), ('leftLeg', [1.9, 12, 0])):
+        skeleton.append(parts.get(label, bone(label, pivot, [])))
+    return geometry(name, skeleton, width=3, height=4)
 
 
 def assets():
@@ -97,9 +107,12 @@ def assets():
         output['resource_pack/attachables/' + name + '.json'] = {
             'format_version': '1.20.30', 'minecraft:attachable': {'description': {
                 'identifier': identifier,
-                'materials': {'default': 'entity_alphatest'},
+                'materials': {'default': 'armor'},
                 'textures': {'default': 'textures/entity/lumen_birds/diving_palette'},
                 'geometry': {'default': 'geometry.lumen_birds.' + name},
+                'scripts': {'parent_setup': 'variable.' + {
+                    'head': 'helmet', 'chest': 'chest', 'legs': 'leg', 'feet': 'boot'
+                }[slot] + '_layer_visible = 0.0;'},
                 'render_controllers': ['controller.render.lumen_birds.diving_suit'],
             }}}
         output['resource_pack/models/entity/' + name + '.geo.json'] = suit_geometry(name)
@@ -143,7 +156,8 @@ def assets():
         'format_version': '1.8.0', 'render_controllers': {
             'controller.render.lumen_birds.submarine': controller,
             'controller.render.lumen_birds.diving_suit': {
-                **controller, 'part_visibility': [{'*': '!context.is_first_person'}]},
+                **controller, 'part_visibility': [{'*': True},
+                    *[{part: '!context.is_first_person'} for part in ('head', 'body', 'rightLeg', 'leftLeg')]]},
         }}
     return output
 
@@ -172,8 +186,10 @@ def binary_assets():
                 if 3 <= x <= 12 and 2 <= y <= 5 or (3 <= x <= 6 or 9 <= x <= 12) and 5 <= y <= 13:
                     return colors[0 if y == 3 else 2]
             else:
-                if (2 <= x <= 6 or 9 <= x <= 13) and 4 <= y <= 13:
-                    return colors[2 if y < 8 else 0]
+                if (3 <= x <= 6 or 10 <= x <= 13) and 3 <= y <= 11:
+                    return colors[0 if y <= 4 else 2]
+                if (1 <= x <= 6 or 8 <= x <= 13) and 11 <= y <= 13:
+                    return colors[5 if y == 13 else 2]
             return (0, 0, 0, 0)
         output['resource_pack/textures/items/' + name + '.png'] = png(16, 16, pixel)
     return output
