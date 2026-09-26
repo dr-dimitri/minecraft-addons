@@ -315,6 +315,159 @@
           ]
         }
       }
+    },
+    "animation.lumen_birds.trout.swim": {
+      "loop": true,
+      "animation_length": 1,
+      "bones": {
+        "root": {
+          "scale": "math.clamp(query.life_time / 1.2, 0.01, 1.0)"
+        },
+        "body": {
+          "rotation": [
+            0,
+            "math.sin(query.life_time * 210.0) * 2.0",
+            0
+          ]
+        },
+        "tail": {
+          "rotation": [
+            0,
+            "math.sin(query.life_time * 210.0) * 18.0",
+            0
+          ]
+        },
+        "fin_left": {
+          "rotation": [
+            0,
+            0,
+            "math.sin(query.life_time * 210.0) * 9.0"
+          ]
+        },
+        "fin_right": {
+          "rotation": [
+            0,
+            0,
+            "-(math.sin(query.life_time * 210.0)) * 9.0"
+          ]
+        },
+        "dorsal": {
+          "rotation": [
+            0,
+            0,
+            "math.sin(query.life_time * 210.0) * 3.0"
+          ]
+        },
+        "anal": {
+          "rotation": [
+            0,
+            0,
+            "-(math.sin(query.life_time * 210.0)) * 3.0"
+          ]
+        }
+      }
+    },
+    "animation.lumen_birds.carp.swim": {
+      "loop": true,
+      "animation_length": 1,
+      "bones": {
+        "root": {
+          "scale": "math.clamp(query.life_time / 1.2, 0.01, 1.0)"
+        },
+        "body": {
+          "rotation": [
+            0,
+            "math.sin(query.life_time * 150.0) * 2.0",
+            0
+          ]
+        },
+        "tail": {
+          "rotation": [
+            0,
+            "math.sin(query.life_time * 150.0) * 18.0",
+            0
+          ]
+        },
+        "fin_left": {
+          "rotation": [
+            0,
+            0,
+            "math.sin(query.life_time * 150.0) * 9.0"
+          ]
+        },
+        "fin_right": {
+          "rotation": [
+            0,
+            0,
+            "-(math.sin(query.life_time * 150.0)) * 9.0"
+          ]
+        },
+        "dorsal": {
+          "rotation": [
+            0,
+            0,
+            "math.sin(query.life_time * 150.0) * 3.0"
+          ]
+        },
+        "anal": {
+          "rotation": [
+            0,
+            0,
+            "-(math.sin(query.life_time * 150.0)) * 3.0"
+          ]
+        }
+      }
+    },
+    "animation.lumen_birds.pike.swim": {
+      "loop": true,
+      "animation_length": 1,
+      "bones": {
+        "root": {
+          "scale": "math.clamp(query.life_time / 1.2, 0.01, 1.0)"
+        },
+        "body": {
+          "rotation": [
+            0,
+            "math.sin(query.life_time * 120.0) * 2.0",
+            0
+          ]
+        },
+        "tail": {
+          "rotation": [
+            0,
+            "math.sin(query.life_time * 120.0) * 14.0",
+            0
+          ]
+        },
+        "fin_left": {
+          "rotation": [
+            0,
+            0,
+            "math.sin(query.life_time * 120.0) * 9.0"
+          ]
+        },
+        "fin_right": {
+          "rotation": [
+            0,
+            0,
+            "-(math.sin(query.life_time * 120.0)) * 9.0"
+          ]
+        },
+        "dorsal": {
+          "rotation": [
+            0,
+            0,
+            "math.sin(query.life_time * 120.0) * 3.0"
+          ]
+        },
+        "anal": {
+          "rotation": [
+            0,
+            0,
+            "-(math.sin(query.life_time * 120.0)) * 3.0"
+          ]
+        }
+      }
     }
   }
 }

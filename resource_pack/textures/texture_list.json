@@ -5,5 +5,8 @@
   "textures/entity/lumen_birds/goldfinch",
   "textures/entity/lumen_birds/eagle",
   "textures/entity/lumen_birds/owl",
-  "textures/entity/lumen_birds/eagle_owl"
+  "textures/entity/lumen_birds/eagle_owl",
+  "textures/entity/lumen_birds/trout",
+  "textures/entity/lumen_birds/carp",
+  "textures/entity/lumen_birds/pike"
 ]

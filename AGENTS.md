@@ -67,6 +67,13 @@ nicht erforderlich.
   geladenen Chunks, nur Overworld, höchstens 18 geladene Vögel sowie Aufräumen bei
   Aktivitätswechsel, Dimensionswechsel und Wiederladen. Tagvögel sind nur tagsüber
   aktiv; Eulen und Uhus in Dämmerung/Nacht mit geprüften Sitzplätzen auf Laub. Nativen Despawn als Rückfallebene erhalten.
+- Fische werden getrennt verwaltet: Forellen/Karpfen am Tag, Hechte in Dämmerung
+  und Nacht, höchstens zwölf geladene Fische in drei Gruppen zusätzlich zum
+  Vogellimit. Wasserraum und vollständigen Körperbereich vor Spawn und Bewegung
+  prüfen; keine Fische in Lava, Luft oder wassergefüllten festen Blöcken.
+  Auch Fische bleiben stumm und dekorativ, ohne Angriffe, Beute oder Fangfunktion.
+  Änderungen an Fischmodellen gegen die Wasser-Prüfhülle einschließlich aller
+  Animations- und Blickwinkel prüfen; Zwischenspeicher nie über Ticks behalten.
 - Fremde Assets benötigen nachvollziehbare Herkunft und Rechtehinweise. Die
   bestehenden Modelle und Paletten sind eigene Projektinhalte; `NOTICE.md` und
   `LICENSE` bei geänderter Herkunft entsprechend pflegen.

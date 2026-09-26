@@ -5,7 +5,7 @@ import re
 import struct
 import uuid
 import zlib
-from generate import ROOT, SPECIES, NOCTURNAL_SPECIES, VERSION, ENGINE, RP_UUID, BP_UUID
+from generate import ROOT, SPECIES, FISH_SPECIES, NOCTURNAL_SPECIES, EMISSIVE_SPECIES, VERSION, ENGINE, RP_UUID, BP_UUID
 
 
 def require(condition, message):
@@ -39,8 +39,9 @@ def check_png(path, dimensions):
     require(len(zlib.decompress(compressed)) == dimensions[1] * (1 + dimensions[0] * 3), f"PNG pixels: {path}")
 
 
-def check_owl_texture(path):
+def check_emissive_texture(path, species):
     """Check the uncompressed BGRA texture and its inverse-alpha glow mask."""
+    label = "Pike" if species == "pike" else "Owl"
     data = path.read_bytes()
     require(len(data) == 18 + 64 * 16 * 4, f"TGA pixels: {path}")
     header = struct.unpack("<BBBHHBHHHHBB", data[:18])
@@ -50,9 +51,13 @@ def check_owl_texture(path):
             start = 18 + (y * 64 + x) * 4
             blue, green, red, alpha = data[start:start + 4]
             eye = x >= 56
-            require(alpha == (3 if eye else 255), f"Owl eye alpha mask: {path}")
+            require(alpha == (3 if eye else 255), f"{label} eye alpha mask: {path}")
             if eye:
-                require(red >= 128 and red > green * 2 and red > blue * 2, f"Owl eyes must be red: {path}")
+                if species == "pike":
+                    require(min(red, green) >= 128 and max(red, green) <= min(red, green) * 1.5
+                            and min(red, green) > blue * 2, f"Pike eyes must be yellow: {path}")
+                else:
+                    require(red >= 128 and red > green * 2 and red > blue * 2, f"Owl eyes must be red: {path}")
 
 
 def validate(root=ROOT):
@@ -75,7 +80,9 @@ def validate(root=ROOT):
     require(script["language"] == "javascript" and (bp / script["entry"]).is_file(), "Script entry missing")
     require((bp / script["entry"]).resolve().is_relative_to(bp.resolve()), "Script entry outside pack")
     for source in (root / "src").glob("*.js"):
-        require(source.read_bytes() == (bp / "scripts" / source.name).read_bytes(), f"Stale script: {source.name}")
+        generated = bp / "scripts" / source.name
+        require(generated.is_file(), f"Missing generated script: {source.name}")
+        require(source.read_bytes() == generated.read_bytes(), f"Stale script: {source.name}")
     scripts = "\n".join(p.read_text() for p in (bp / "scripts").glob("*.js"))
     require(not re.search(r"\b(playSound|runCommand|playMusic|stopMusic|setBlock|setType)\b", scripts), "Unexpected world/audio mutation")
     for path in (bp / "scripts").glob("*.js"):
@@ -91,6 +98,9 @@ def validate(root=ROOT):
     require(len(list((rp / "entity").glob("*.json"))) == len(SPECIES), "Unexpected client entities")
     for species in SPECIES:
         nocturnal = species in NOCTURNAL_SPECIES
+        fish = species in FISH_SPECIES
+        emissive = species in EMISSIVE_SPECIES
+        label = "Pike" if species == "pike" else "Owl"
         identifier = "lumen_birds:" + species
         server = load(bp / "entities" / (species + ".json"))["minecraft:entity"]
         client = load(rp / "entity" / (species + ".entity.json"))["minecraft:client_entity"]["description"]
@@ -101,7 +111,12 @@ def validate(root=ROOT):
             require(server["description"].get("properties", {}).get("lumen_birds:perched") == {
                 "type": "bool", "default": False, "client_sync": True,
             }, "Missing/unsynchronized perch property")
+        if fish:
+            require("lumen_birds:perched" not in server["description"].get("properties", {}),
+                    "Fish cannot use a perch property")
         comp = server["components"]
+        require(comp["minecraft:type_family"]["family"] == ["lumen_fish" if fish else "lumen_birds"],
+                "Entity family mismatch")
         require(comp["minecraft:physics"] == {"has_gravity": False, "has_collision": False}, "Physics mismatch")
         require(comp["minecraft:damage_sensor"]["triggers"] == [{"deals_damage": "no"}], "Damage suppression missing")
         require(comp["minecraft:timer"] == {"looping": False, "time": 60,
@@ -123,19 +138,30 @@ def validate(root=ROOT):
                 require(all(v > 0 for v in cube["size"]), "Invalid cube size")
                 for face in cube["uv"].values():
                     require(all(0 <= u and u + s <= bound for u, s, bound in zip(face["uv"], face["uv_size"], (64, 16))), "Texture UV out of bounds")
-        if nocturnal:
+        if emissive:
             require(client["materials"] == {"default": "entity_alphatest", "eyes": "entity_emissive"},
                     "Missing emissive eye material")
             eyes = next((bone for bone in geo["bones"] if bone["name"] == "eyes"), None)
             require(eyes is not None and eyes.get("parent") == "head" and len(eyes.get("cubes", [])) == 2,
-                    "Missing owl eye geometry")
+                    "Missing owl eye geometry" if nocturnal else "Missing pike eye geometry")
             for bone in geo["bones"]:
                 for cube in bone.get("cubes", []):
                     for face in cube["uv"].values():
                         x, width = face["uv"][0], face["uv_size"][0]
                         require((56 <= x and x + width <= 64) if bone["name"] == "eyes" else x + width <= 56,
-                                "Owl eye texture mapping")
-            check_owl_texture(rp / (client["textures"]["default"] + ".tga"))
+                                f"{label} eye texture mapping")
+            check_emissive_texture(rp / (client["textures"]["default"] + ".tga"), species)
+            require(client["render_controllers"] == ["controller.render.lumen_birds.nocturnal"],
+                    f"{label} render controller wiring")
+            require(controllers.get("controller.render.lumen_birds.nocturnal") == {
+                "geometry": "Geometry.default",
+                "materials": [{"*": "Material.default"}, {"eyes": "Material.eyes"}],
+                "textures": ["Texture.default"],
+            }, f"{label} emissive eye render mapping")
+        else:
+            require(client["materials"] == {"default": "entity_alphatest"}, "Unexpected material")
+            check_png(rp / (client["textures"]["default"] + ".png"), (64, 16))
+        if nocturnal:
             require(client["animations"] == {
                 "flight": "animation.lumen_birds." + species + ".flight",
                 "perch": "animation.lumen_birds." + species + ".perch",
@@ -152,16 +178,10 @@ def validate(root=ROOT):
                               "blend_transition": .35},
                 },
             }, "Owl pose controller wiring")
-            require(client["render_controllers"] == ["controller.render.lumen_birds.nocturnal"],
-                    "Owl render controller wiring")
-            require(controllers.get("controller.render.lumen_birds.nocturnal") == {
-                "geometry": "Geometry.default",
-                "materials": [{"*": "Material.default"}, {"eyes": "Material.eyes"}],
-                "textures": ["Texture.default"],
-            }, "Owl emissive eye render mapping")
-        else:
-            require(client["materials"] == {"default": "entity_alphatest"}, "Unexpected material")
-            check_png(rp / (client["textures"]["default"] + ".png"), (64, 16))
+        if fish:
+            require(client["animations"] == {"swim": "animation.lumen_birds." + species + ".swim"},
+                    "Fish swim animation wiring")
+            require(client["scripts"]["animate"] == ["swim"], "Fish swim animation inactive")
         for entry in client["scripts"]["animate"]:
             for alias in [entry] if isinstance(entry, str) else entry:
                 require(alias in client["animations"] and (client["animations"][alias] in animations

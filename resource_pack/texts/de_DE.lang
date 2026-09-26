@@ -5,3 +5,6 @@ entity.lumen_birds:goldfinch.name=Stieglitz
 entity.lumen_birds:eagle.name=Steinadler
 entity.lumen_birds:owl.name=Eule
 entity.lumen_birds:eagle_owl.name=Uhu
+entity.lumen_birds:trout.name=Forelle
+entity.lumen_birds:carp.name=Karpfen
+entity.lumen_birds:pike.name=Hecht

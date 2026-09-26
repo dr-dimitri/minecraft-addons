@@ -1,0 +1,28 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "lumen_birds:trout",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/lumen_birds/trout"
+      },
+      "geometry": {
+        "default": "geometry.lumen_birds.trout"
+      },
+      "animations": {
+        "swim": "animation.lumen_birds.trout.swim"
+      },
+      "scripts": {
+        "animate": [
+          "swim"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.lumen_birds"
+      ]
+    }
+  }
+}

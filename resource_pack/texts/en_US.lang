@@ -5,3 +5,6 @@ entity.lumen_birds:goldfinch.name=Goldfinch
 entity.lumen_birds:eagle.name=Golden eagle
 entity.lumen_birds:owl.name=Owl
 entity.lumen_birds:eagle_owl.name=Eagle owl
+entity.lumen_birds:trout.name=Trout
+entity.lumen_birds:carp.name=Carp
+entity.lumen_birds:pike.name=Pike

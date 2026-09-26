@@ -1,4 +1,4 @@
-"""Generate original cuboid bird models and both Bedrock packs, using only stdlib."""
+"""Generate original cuboid animal models and both Bedrock packs, using only stdlib."""
 from pathlib import Path
 import json
 import shutil
@@ -11,12 +11,16 @@ ENGINE = [1, 21, 90]  # First Bedrock release with stable @minecraft/server 2.0.
 RP_UUID = "5ab6115a-55e8-4ba6-8c9a-d2f707667af4"
 BP_UUID = "142232de-2028-4b6e-8048-c41d5ecda537"
 NOCTURNAL_SPECIES = ("owl", "eagle_owl")
-SPECIES = ("raven", "blue_tit", "robin", "goldfinch", "eagle", *NOCTURNAL_SPECIES)
+BIRD_SPECIES = ("raven", "blue_tit", "robin", "goldfinch", "eagle", *NOCTURNAL_SPECIES)
+FISH_SPECIES = ("trout", "carp", "pike")
+EMISSIVE_SPECIES = (*NOCTURNAL_SPECIES, "pike")
+SPECIES = (*BIRD_SPECIES, *FISH_SPECIES)
 NAMES = {
     "raven": ("Rabe", "Raven"), "blue_tit": ("Blaumeise", "Blue tit"),
     "robin": ("Rotkehlchen", "Robin"), "goldfinch": ("Stieglitz", "Goldfinch"),
     "eagle": ("Steinadler", "Golden eagle"),
     "owl": ("Eule", "Owl"), "eagle_owl": ("Uhu", "Eagle owl"),
+    "trout": ("Forelle", "Trout"), "carp": ("Karpfen", "Carp"), "pike": ("Hecht", "Pike"),
 }
 # Body, breast, crown, wing, flight feathers, tail, beak, eye.
 PALETTES = {
@@ -27,6 +31,10 @@ PALETTES = {
     "eagle": ["644c38", "78563b", "ad864f", "574438", "352e29", "695241", "b99b52", "171b1b"],
     "owl": ["75675c", "d0c3a8", "8f8071", "605950", "423e39", "63574a", "514330", "ff2525"],
     "eagle_owl": ["745037", "c9a477", "926a45", "62432f", "392e26", "735336", "4a3829", "ff2525"],
+    # Fish: flank, belly, back, fins, markings, tail, mouth/barbels/teeth, eyes.
+    "trout": ["a0b1aa", "d4d9c4", "536c61", "748f85", "39463f", "657e73", "b4beb0", "151d1b"],
+    "carp": ["a47b43", "d8bb77", "816237", "79542d", "5c4328", "947042", "c4a469", "191b15"],
+    "pike": ["24382f", "485349", "17271f", "26392f", "111b18", "2d4436", "b9b894", "ffd34b"],
 }
 
 
@@ -65,6 +73,8 @@ def cube(origin, size, color, rotation=None, pivot=None):
 
 
 def geometry(species):
+    if species in FISH_SPECIES:
+        return fish_geometry(species)
     if species in NOCTURNAL_SPECIES:
         return owl_geometry(species)
     eagle, raven = species == "eagle", species == "raven"
@@ -128,6 +138,98 @@ def geometry(species):
                         "visible_bounds_width": 4, "visible_bounds_height": 4,
                         "visible_bounds_offset": [0, .25, 0]}, "bones": bones,
     }]}
+
+
+def fish_geometry(species):
+    """Centered fish; even animated fins fit the controller's water clearance."""
+    w, h = {"trout": (2.8, 3.0), "carp": (3.9, 4.6), "pike": (2.4, 2.5)}[species]
+    body = [cube([-w / 2, -h / 2, -3.5], [w, h, 7.0], 0),
+            cube([-w * .40, -h * .52, -2.8], [w * .8, h * .28, 5.5], 1),
+            cube([-w * .38, h * .34, -2.9], [w * .76, h * .2, 5.7], 2)]
+    if species == "carp":
+        # A deep belly and raised shoulder make a visibly rounder silhouette.
+        body += [cube([-w * .43, h * .31, -2.3], [w * .86, 1.1, 3.8], 0),
+                 cube([-w * .34, -h * .58, -1.9], [w * .68, .7, 3.8], 1)]
+    for side in (-1, 1):
+        x = side * w / 2 - (.02 if side > 0 else .10)
+        for row in (-1, 1):
+            for i in range(5 if species == "trout" else 4):
+                # Original small spot/scales/streak quads, not borrowed textures.
+                y = row * h * .19 + (i % 2) * .15
+                z = -2.7 + i * 1.25 + (.35 if row > 0 else 0)
+                body.append(cube([x, y, z], [.12, .32 if species == "trout" else .65,
+                                                            .38 if species == "trout" else .19],
+                                 4 if species != "pike" else 1))
+    bones = [{"name": "root", "pivot": [0, 0, 0]},
+             {"name": "body", "parent": "root", "pivot": [0, 0, 0], "cubes": body}]
+    if species == "pike":
+        head_w, head_z, eye_z = 2.5, -6.8, -6.25
+        head = [cube([-head_w / 2, -.85, head_z], [head_w, 1.9, 3.6], 0),
+                cube([-1.06, .25, -10.2], [2.12, .68, 3.6], 2),
+                cube([-.94, -.80, -10.1], [1.88, .40, 3.5], 0)]
+        for side in (-1, 1):
+            for z in (-9.5, -8.5, -7.5):
+                head.append(cube([side * .78 - .10, -.11, z], [.20, .39, .23], 6))
+            head.append(cube([side * head_w / 2 - (.02 if side > 0 else .12), .17, eye_z - .14],
+                             [.14, .82, 1.06], 4))
+    else:
+        head_w = w * .82
+        head_z, eye_z = (-5.9, -5.38) if species == "trout" else (-5.5, -4.95)
+        head_h = h * .72
+        head = [cube([-head_w / 2, -head_h / 2, head_z], [head_w, head_h, -3.25 - head_z], 0),
+                cube([-head_w * .4, -head_h * .43, head_z - .6], [head_w * .8, head_h * .54, .75], 6),
+                cube([-head_w * .34, -head_h * .14, head_z - .64], [head_w * .68, .14, .1], 4)]
+        if species == "carp":
+            for side in (-1, 1):
+                head.append(cube([side * head_w * .31 - .09, -1.75, head_z - .69], [.18, 1.36, .22],
+                                 6, [0, 0, side * 17], [side * head_w * .31, -.39, head_z - .58]))
+    bones.append({"name": "head", "parent": "body", "pivot": [0, 0, -3.3], "cubes": head})
+    bones.append({"name": "eyes", "parent": "head", "pivot": [0, 0, -3.3], "cubes": [
+        cube([side * head_w / 2 - (.01 if side > 0 else .16), .33, eye_z], [.17, .49, .66], 7)
+        for side in (-1, 1)
+    ]})
+    # A narrow peduncle leads to the forked, vertically spread tail fin.
+    tail_height = 3.15 if species == "carp" else 2.6
+    bones.append({"name": "tail", "parent": "body", "pivot": [0, 0, 3.2], "cubes": [
+        cube([-w * .25, -h * .31, 3.1], [w * .5, h * .62, 2.65], 0),
+        cube([-.24, -1.15, 5.55], [.48, 2.3, 1.8], 5),
+        cube([-.20, .65, 7.05], [.4, tail_height - .65, 2.05], 5),
+        cube([-.20, -tail_height, 7.05], [.4, tail_height - .65, 2.05], 5),
+    ]})
+    for side, name in ((1, "fin_left"), (-1, "fin_right")):
+        x = w * .36 if side > 0 else -w * .36 - 1.8
+        bones.append({"name": name, "parent": "body", "pivot": [side * w * .36, -h * .22, -1.75],
+                      "cubes": [cube([x, -h * .22, -1.85], [1.8, .23, 2.35], 3)]})
+    dorsal_y = h * .31 + 1.1 if species == "carp" else h * .54
+    dorsal_z = 1.8 if species == "pike" else -.5
+    bones.append({"name": "dorsal", "parent": "body", "pivot": [0, dorsal_y, dorsal_z], "cubes": [
+        cube([-.13, dorsal_y - .08, dorsal_z], [.26, 1.35, 2.7], 3),
+        cube([-.12, dorsal_y + .65, dorsal_z + .45], [.24, 1.10, 1.65], 3),
+    ]})
+    bones.append({"name": "anal", "parent": "body", "pivot": [0, -h * .44, 1.65], "cubes": [
+        cube([-.13, -h * .44 - 1.05, 1.65], [.26, 1.2, 2.0], 3),
+    ]})
+    return {"format_version": "1.12.0", "minecraft:geometry": [{
+        "description": {"identifier": "geometry.lumen_birds." + species,
+                        "texture_width": 64, "texture_height": 16,
+                        "visible_bounds_width": 3, "visible_bounds_height": 2,
+                        "visible_bounds_offset": [0, 0, 0]}, "bones": bones,
+    }]}
+
+
+def swim_animation(species):
+    frequency = {"trout": 210, "carp": 150, "pike": 120}[species]
+    tail_angle = 14 if species == "pike" else 18
+    sway = f"math.sin(query.life_time * {frequency}.0)"
+    return {"loop": True, "animation_length": 1, "bones": {
+        "root": {"scale": "math.clamp(query.life_time / 1.2, 0.01, 1.0)"},
+        "body": {"rotation": [0, f"{sway} * 2.0", 0]},
+        "tail": {"rotation": [0, f"{sway} * {tail_angle}.0", 0]},
+        "fin_left": {"rotation": [0, 0, f"{sway} * 9.0"]},
+        "fin_right": {"rotation": [0, 0, f"-({sway}) * 9.0"]},
+        "dorsal": {"rotation": [0, 0, f"{sway} * 3.0"]},
+        "anal": {"rotation": [0, 0, f"-({sway}) * 3.0"]},
+    }}
 
 
 def owl_geometry(species):
@@ -209,6 +311,8 @@ def perch_animation():
 
 
 def animation(species):
+    if species in FISH_SPECIES:
+        return swim_animation(species)
     if species in NOCTURNAL_SPECIES:
         frequency = 540 if species == "eagle_owl" else 660
         wing = f"math.mod(query.life_time, 6.0) < 3.2 ? math.sin(query.life_time * {frequency}.0) * 32.0 : 5.0"
@@ -246,7 +350,7 @@ def generate(root=ROOT):
             shutil.rmtree(directory)
         directory.mkdir(parents=True)
     common = {"name": "Lumen · Stumme Himmelsvögel", "description":
-              "Sieben stumme Vogelarten: fünf am Tag, Eulen und Uhus in Dämmerung und Nacht mit roten Leuchtaugen und Baumsitzplätzen.",
+              "Sieben stumme Vogelarten am Tag und in der Nacht; Forellen, Karpfen und dunkle Hechte mit gelben Leuchtaugen im Wasser.",
               "version": VERSION, "min_engine_version": ENGINE}
     write_json(rp / "manifest.json", {"format_version": 2, "header": {**common, "uuid": RP_UUID},
         "modules": [{"type": "resources", "uuid": "e8a4612a-1414-41b6-92f4-025cd544ed04", "version": VERSION}]})
@@ -264,6 +368,9 @@ def generate(root=ROOT):
     for species in SPECIES:
         identifier = "lumen_birds:" + species
         nocturnal = species in NOCTURNAL_SPECIES
+        fish = species in FISH_SPECIES
+        emissive = species in EMISSIVE_SPECIES
+        animation_name = "swim" if fish else "flight"
         description = {"identifier": identifier, "is_spawnable": False, "is_summonable": True}
         if nocturnal:
             description["properties"] = {"lumen_birds:perched": {"type": "bool", "default": False, "client_sync": True}}
@@ -273,7 +380,7 @@ def generate(root=ROOT):
             "description": description,
             "component_groups": {"lumen_birds:retire": {"minecraft:instant_despawn": {}}},
             "components": {
-                "minecraft:type_family": {"family": ["lumen_birds"]},
+                "minecraft:type_family": {"family": ["lumen_fish" if fish else "lumen_birds"]},
                 "minecraft:health": {"value": 1, "max": 1},
                 "minecraft:physics": {"has_gravity": False, "has_collision": False},
                 "minecraft:collision_box": {"width": .25, "height": .25},
@@ -289,25 +396,26 @@ def generate(root=ROOT):
                 "materials": {"default": "entity_alphatest"},
                 "textures": {"default": "textures/entity/lumen_birds/" + species},
                 "geometry": {"default": "geometry.lumen_birds." + species},
-                "animations": {"flight": "animation.lumen_birds." + species + ".flight"},
-                "scripts": {"animate": ["flight"]},
+                "animations": {animation_name: "animation.lumen_birds." + species + "." + animation_name},
+                "scripts": {"animate": [animation_name]},
                 "render_controllers": ["controller.render.lumen_birds"],
         }
-        if nocturnal:
+        if emissive:
             client["materials"]["eyes"] = "entity_emissive"
+            client["render_controllers"] = ["controller.render.lumen_birds.nocturnal"]
+        if nocturnal:
             client["animations"].update(perch="animation.lumen_birds." + species + ".perch",
                                          pose="controller.animation.lumen_birds.nocturnal")
             client["scripts"]["animate"] = ["pose"]
-            client["render_controllers"] = ["controller.render.lumen_birds.nocturnal"]
             animations["animation.lumen_birds." + species + ".perch"] = perch_animation()
         write_json(rp / "entity" / (species + ".entity.json"), {"format_version": "1.10.0", "minecraft:client_entity": {
             "description": client}})
         write_json(rp / "models" / "entity" / (species + ".geo.json"), geometry(species))
-        animations["animation.lumen_birds." + species + ".flight"] = animation(species)
+        animations["animation.lumen_birds." + species + "." + animation_name] = animation(species)
         colors = [bytes.fromhex(color) for color in PALETTES[species]]
-        texture = rp / "textures" / "entity" / "lumen_birds" / (species + (".tga" if nocturnal else ".png"))
+        texture = rp / "textures" / "entity" / "lumen_birds" / (species + (".tga" if emissive else ".png"))
         texture.parent.mkdir(parents=True, exist_ok=True)
-        if nocturnal:
+        if emissive:
             # Vanilla entity_emissive requires TGA and interprets alpha inversely.
             # Alpha 3 matches the glow pixels in Mojang's enderman.tga sample;
             # other palette slots remain opaque under entity_alphatest.
@@ -348,7 +456,7 @@ def generate(root=ROOT):
         return (224, 186, 104) if wing_shape or body_shape or head_shape else sky
     for directory in (bp, rp):
         (directory / "pack_icon.png").write_bytes(png(128, 128, icon_pixel))
-    print(f"Generated {len(SPECIES)} original bird models, animations and both packs.")
+    print(f"Generated {len(BIRD_SPECIES)} original bird and {len(FISH_SPECIES)} fish models, animations and both packs.")
 
 
 if __name__ == "__main__":

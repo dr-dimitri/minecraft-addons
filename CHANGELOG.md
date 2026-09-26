@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+- Forellen und Karpfen am Tag sowie dunkle Hechte mit gelben Leuchtaugen in
+  Dämmerung/Nacht ergänzt: eigene Modelle, Schwimmanimationen und stumme
+  dekorative Entitäten ohne Angriffe oder Beute.
+- Fische schwimmen nur in geprüftem Wasserraum. Wasserverlust, Hindernisse,
+  Tageszeitwechsel, Reise und Wiederladen räumen Gruppen auf. Eigenes Limit von
+  zwölf geladenen Fischen in drei Gruppen; das Vogellimit bleibt bei 18.
+- Im Review eine Kollision der gemischten Tagesgruppe behoben: Forellen und
+  Karpfen halten durch ein gemeinsames Schwimmtempo über ihre Lebensdauer Abstand.
+- Fisch-Prüfliste und Modellvorschau ergänzt; die tatsächliche Bedrock-Darstellung,
+  Wassergrenzen, Leuchtaugen und Leistung bleiben noch zu prüfen.
+
 - Tag- und Nachtgruppen entstehen nicht mehr unter niedrigen Dächern, auch wenn
   darüber Baumkronen liegen. Die Prüfung berücksichtigt den Block direkt über
   den Füßen schleichender oder schwimmender Spieler und lässt hohes Gras zu.

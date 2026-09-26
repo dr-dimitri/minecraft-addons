@@ -1,7 +1,7 @@
 """Orthographic SVG inspection of the actual geometry; not an in-game screenshot."""
 from html import escape
 import math
-from generate import ROOT, SPECIES, NOCTURNAL_SPECIES, PALETTES, NAMES, geometry, perch_animation
+from generate import ROOT, SPECIES, BIRD_SPECIES, FISH_SPECIES, NOCTURNAL_SPECIES, PALETTES, NAMES, geometry, perch_animation
 
 
 def rotate(point, angles, pivot=(0, 0, 0)):
@@ -21,6 +21,7 @@ def bird_svg(species, center, scale, pose="flight"):
     geo = geometry(species)["minecraft:geometry"][0]
     bones = {b["name"]: b for b in geo["bones"]}
     nocturnal = species in NOCTURNAL_SPECIES
+    fish = species in FISH_SPECIES
     pose_bones = perch_animation()["bones"] if nocturnal and pose == "perch" else {}
     faces = []
     for bone in geo["bones"]:
@@ -37,11 +38,15 @@ def bird_svg(species, center, scale, pose="flight"):
                     angles = pose_bones.get(ancestor["name"], {}).get("rotation", [0, 0, angle])
                     if nocturnal and pose == "flight" and ancestor["name"] == "root":
                         angles = [-18, 0, -4]
+                    if fish and ancestor["name"] == "tail":
+                        angles = [0, 10, 0]
                     point = rotate(point, angles, ancestor["pivot"])
                     ancestor = bones.get(ancestor.get("parent"))
                 # Front views keep both owl eyes visible in this simple painter
                 # preview, while the higher flight view also shows the wings.
                 camera = ([24, 0, 0] if pose == "perch" else [38, 0, 0]) if nocturnal else [30, -28, -9]
+                if fish:
+                    camera = [0, 90, 0]
                 points.append(rotate(point, camera))
             palette = PALETTES[species][int(cube["uv"]["north"]["uv"][0] // 8)]
             rgb = bytes.fromhex(palette)
@@ -49,7 +54,7 @@ def bird_svg(species, center, scale, pose="flight"):
                                     ((0, 3, 7, 4), .73), ((1, 5, 6, 2), .95),
                                     ((3, 2, 6, 7), 1.22), ((0, 4, 5, 1), .6)]:
                 coords = [points[i] for i in indices]
-                # Bright red previews the eye material mask, not game lighting.
+                # Unshaded eyes preview their palette, not actual game lighting.
                 if bone["name"] == "eyes":
                     light = 1
                 color = "#" + "".join(f"{min(255, round(v * light)):02x}" for v in rgb)
@@ -74,19 +79,24 @@ def create_preview():
            f'<rect width="{width}" height="{height}" fill="url(#sky)"/>',
            '<g font-family="system-ui, sans-serif">',
            '<text x="64" y="65" fill="#e6bd73" font-size="17" letter-spacing="4">LUMEN · STUMME HIMMELSVÖGEL</text>',
-           '<text x="64" y="120" fill="#edf4ee" font-size="42" font-weight="650">Ein lebendiger Himmel. Ganz ohne Gezwitscher.</text>',
-           f'<text x="64" y="157" fill="#a6bdc6" font-size="19">Geometrievorschau · {len(SPECIES)} Vogelmodelle · kein Screenshot aus Minecraft</text>']
+           '<text x="64" y="120" fill="#edf4ee" font-size="40" font-weight="650">Leben am Himmel und im Wasser. Ganz ohne Geräusche.</text>',
+           f'<text x="64" y="157" fill="#a6bdc6" font-size="19">Geometrievorschau · {len(BIRD_SPECIES)} Vogel- und {len(FISH_SPECIES)} Fischmodelle · kein Screenshot aus Minecraft</text>']
     subtitles = {"raven": "Flügelschlag & Gleitphasen", "blue_tit": "Blaue Flügel · gelbe Brust",
                  "robin": "Warme orangefarbene Brust", "goldfinch": "Roter Kopf · gelbe Flügelbinde",
                  "eagle": "Breite Schwingen · ruhige Kreise",
                  "owl": "Dämmerung & Nacht · rote Leuchtaugen",
-                 "eagle_owl": "Größer · Federohren · rote Leuchtaugen"}
-    scales = {"raven": 11, "blue_tit": 19, "robin": 19, "goldfinch": 19, "eagle": 9}
+                 "eagle_owl": "Größer · Federohren · rote Leuchtaugen",
+                 "trout": "Silbrige Flanken · dunkle Punkte",
+                 "carp": "Goldbrauner Bauch · feine Barteln",
+                 "pike": "Dunkler Hecht · gelbe Leuchtaugen"}
+    scales = {"raven": 11, "blue_tit": 19, "robin": 19, "goldfinch": 19, "eagle": 9,
+              "trout": 20, "carp": 20, "pike": 17}
     for index, species in enumerate(SPECIES):
         x = margin + index % columns * (card_w + gap)
         y = 205 + index // columns * (card_h + gap)
         nocturnal = species in NOCTURNAL_SPECIES
-        fill = "#202f43" if nocturnal else "#173542"
+        fish = species in FISH_SPECIES
+        fill = "#173b40" if fish else "#202f43" if nocturnal else "#173542"
         svg.append(f'<rect x="{x}" y="{y}" width="{card_w}" height="{card_h}" rx="22" fill="{fill}" stroke="#33515b"/>')
         if nocturnal:
             # Both snapshots use the real connected skeleton and sitting angles.
@@ -99,8 +109,8 @@ def create_preview():
             svg.append(bird_svg(species, (x + card_w / 2, y + 137), scales[species]))
         svg += [f'<text x="{x + 23}" y="{y + 263}" fill="#edf4ee" font-size="25" font-weight="600">{NAMES[species][0]}</text>',
                 f'<text x="{x + 23}" y="{y + 291}" fill="#a6bdc6" font-size="15">{escape(subtitles[species])}</text>']
-    svg += [f'<text x="64" y="{height - 42}" fill="#a6bdc6" font-size="18">Oberwelt · Tag- und Nachtvögel im Wechsel · höchstens 18 geladene Vögel insgesamt</text>',
-            f'<text x="64" y="{height - 16}" fill="#8da4ae" font-size="15">Leuchtaugen und Posewechsel müssen zusätzlich in Minecraft geprüft werden.</text>',
+    svg += [f'<text x="64" y="{height - 42}" fill="#a6bdc6" font-size="18">Oberwelt · Tag- und Nachtvögel · dekorative Süßwasserfische in geprüftem Wasser</text>',
+            f'<text x="64" y="{height - 16}" fill="#8da4ae" font-size="15">Leuchtaugen, Flug-, Sitz- und Schwimmbewegungen müssen zusätzlich in Minecraft geprüft werden.</text>',
             '</g></svg>']
     (ROOT / "docs" / "PREVIEW.svg").write_text("\n".join(svg), encoding="utf-8")
 
