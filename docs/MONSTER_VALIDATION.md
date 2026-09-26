@@ -12,13 +12,19 @@ Aufenthalt vor der automatischen Rettung.
 ## Testaufbau
 
 - Aktuellen lokalen Entwicklungsbuild in eine neue Windows-/Bedrock-Testwelt
-  0.2.0 importieren; BP und RP aktivieren. Der historische Kandidat 0.1.1 enthält
+  0.2.1 importieren; BP und RP aktivieren. Der historische Kandidat 0.1.1 enthält
   das Tiefenmaul nicht. Die Paket-UUIDs bleiben beim Update erhalten.
 - Bedrock-Version, Quellcommit/Diff, SHA-256 des Builds, Plattform und Grafikmodus
   notieren. Das Add-on verwendet weiterhin die stabile Server-API 2.0.0.
 - Tiefes offenes Wasser mit mindestens ungefähr 29 × 29 × 17 freien Wasserblöcken
   suchen. Am Wasserspiegel oder unter Wasser höchstens fünf Sekunden warten.
   Die Suche ist begrenzt und prüft keine komplette Welt oder Biomenamen.
+- Mit 0.2.1 einen breiten Bereich mit genau
+  17 freien Wasserlagen (zum Beispiel Y 46 bis 62) prüfen. Ohne bestehendes
+  Monster jeweils am Rand auf Y 63/64 sowie leicht eingetaucht warten.
+  Die ergänzte Höhensuche soll den geeigneten Bereich ohne Wechsel auf eine
+  bestimmte Spielerhöhe finden. Mit nur 16 Wasserlagen darf dort kein Monster
+  entstehen. Das Suchbudget bleibt bei 26.000 Blockabfragen pro Spieler.
 
 ## Darstellung und Begegnung
 

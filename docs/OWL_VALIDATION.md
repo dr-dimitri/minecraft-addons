@@ -1,6 +1,6 @@
 # Eulen und Uhus im Entwicklungsstand prüfen
 
-Diese zusätzliche Prüfung gilt für die Nachtfunktion im Releasekandidaten `0.2.0`.
+Diese zusätzliche Prüfung gilt für die Nachtfunktion im Releasekandidaten `0.2.1`.
 Der bisherige Kandidat `birds-v0.1.1` enthält sie noch nicht. Vor einer neuen
 Abnahme den verwendeten Quellcommit, die neue Kandidatenversion und SHA-256 der
 tatsächlich installierten Datei nach [releases/TEMPLATE.md](releases/TEMPLATE.md)
@@ -29,6 +29,11 @@ Animationsübergänge und tatsächliche Flugruhe in Minecraft Bedrock.
    oder andere feste Blöcke sind keine Sitzplätze. Eine geeignete hohe Krone
    muss auch dann zwei Plätze liefern können, wenn ein deutlich niedrigerer
    Nachbarbaum für die vorgesehene Flughöhe ungeeignet ist.
+   Mit 0.2.1 eine einzelne freie 3 × 3-Laubkrone
+   von um ein bis drei Blöcke versetzten Positionen testen, auch bei negativen
+   Koordinaten. Je Position ohne bestehende Gruppe starten und fünf Sekunden
+   stillstehen. Beide Tiere sollen getrennte Sitzplätze finden, auch wenn die
+   Krone zwischen den bisherigen Suchpunkten liegt.
 5. Mindestens zwei Minuten beobachten: Sitzen mit angelegten Flügeln, sanftes
    Aufsteigen, Rundflug, Absenken und erneutes Sitzen. Füße sollen auf dem Laub
    stehen; keine dauerhaft schlagenden Flügel im Sitzen oder abgetrennten Körperteile.

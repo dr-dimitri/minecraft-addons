@@ -1,10 +1,10 @@
 # minecraft-addons · Lumen Stumme Himmelsvögel
 
-Optionales Tier-Add-on für Minecraft Bedrock unter Windows. Der aktuelle **Releasekandidat 0.2.0** enthält sieben Vogelarten sowie Forellen, Karpfen und unheimliche Hechte mit gelben Leuchtaugen. Diese Tiere sind dekorativ und stumm. Am Tag fliegen Raben, Blaumeisen, Rotkehlchen, Stieglitze und Steinadler; in Dämmerung und Nacht übernehmen Eulen und Uhus. Dazu kommen das **Tiefenmaul** mit Geburtstagshut und Bauch-Abenteuer sowie eine 100 Blöcke tiefe See. Die separate [Abenteuerwelt](docs/ADVENTURE_WORLD.md) ergänzt vier schwimmende Dörfer, Taucheranzüge, U-Boote und zwei gefährliche Mutantenfische. Verschluckte Dorfhäuser lassen sich im Bauch des Monsters erkunden. Das Add-on funktioniert eigenständig. Das optionale Lumen-Grafikpaket wird im separaten Repository [minecraft-look](https://github.com/dr-dimitri/minecraft-look) entwickelt; eine gemeinsame Nutzung muss im Spiel noch geprüft werden.
+Optionales Tier-Add-on für Minecraft Bedrock unter Windows. Der aktuelle **Releasekandidat 0.2.1** enthält sieben Vogelarten sowie Forellen, Karpfen und unheimliche Hechte mit gelben Leuchtaugen. Diese Tiere sind dekorativ und stumm. Am Tag fliegen Raben, Blaumeisen, Rotkehlchen, Stieglitze und Steinadler; in Dämmerung und Nacht übernehmen Eulen und Uhus. Dazu kommen das **Tiefenmaul** mit Geburtstagshut und Bauch-Abenteuer sowie eine 100 Blöcke tiefe See. Die separate [Abenteuerwelt](docs/ADVENTURE_WORLD.md) ergänzt vier schwimmende Dörfer, Taucheranzüge, U-Boote und zwei gefährliche Mutantenfische. Verschluckte Dorfhäuser lassen sich im Bauch des Monsters erkunden. Das Add-on funktioniert eigenständig. Das optionale Lumen-Grafikpaket wird im separaten Repository [minecraft-look](https://github.com/dr-dimitri/minecraft-look) entwickelt; eine gemeinsame Nutzung muss im Spiel noch geprüft werden.
 
 **Lokal geprüft, noch nicht in Minecraft ausgeführt.** Auf diesem Mac stehen Minecraft für Windows und die RX 9060 XT nicht zur Verfügung. Import, Animationen, Geräuschfreiheit im Spiel und Bildrate sind daher noch auf dem Ziel-PC zu prüfen. Die Modelle sind bewusst im kantigen Minecraft-Stil gestaltet; es sind keine fotorealistischen Tiermodelle.
 
-Der **Releasekandidat 0.2.0** enthält alle hier beschriebenen Funktionen. Seine Windows-/Bedrock-Abnahme steht noch aus; automatische Tests ersetzen sie nicht. Der ältere Kandidat 0.1.1 und seine [historische Windows-Checkliste](docs/releases/0.1.1-windows-checklist.md) bleiben unverändert. Aktuelle Prüfungen stehen in [VALIDATION.md](docs/VALIDATION.md) und der [Anleitung zur Abenteuerwelt](docs/ADVENTURE_WORLD.md).
+Der **Releasekandidat 0.2.1** enthält alle hier beschriebenen Funktionen. Seine Windows-/Bedrock-Abnahme steht noch aus; automatische Tests ersetzen sie nicht. Der ältere Kandidat 0.1.1 und seine [historische Windows-Checkliste](docs/releases/0.1.1-windows-checklist.md) bleiben unverändert. Aktuelle Prüfungen stehen in [VALIDATION.md](docs/VALIDATION.md) und der [Anleitung zur Abenteuerwelt](docs/ADVENTURE_WORLD.md).
 
 ![Originale Modellgeometrie, außerhalb von Minecraft gerendert](docs/PREVIEW.svg)
 
@@ -16,7 +16,7 @@ Der **Releasekandidat 0.2.0** enthält alle hier beschriebenen Funktionen. Seine
 
 - **Minecraft für Windows (Bedrock Edition)**. Im Minecraft Launcher wählst du „Minecraft für Windows“. Diese Erweiterung lässt sich nicht in der Java Edition verwenden.
 - Der aktuelle Entwicklungsstand benötigt mindestens **Bedrock 1.21.110** für den stabilen Biomersatz. Der alte Kandidat 0.1.1 benötigte 1.21.90. Die Mindestversion ist eine technische Voraussetzung; sie bedeutet nicht, dass jede neuere Version bereits mit diesem Add-on getestet wurde.
-- Die Datei **`Lumen-Silent-Birds-0.2.0.mcaddon`**. Sie enthält alles, was Minecraft für die Erweiterung benötigt.
+- Die Datei **`Lumen-Silent-Birds-0.2.1.mcaddon`**. Sie enthält alles, was Minecraft für die Erweiterung benötigt.
 
 Für die Installation einer fertigen Datei brauchst du weder Python noch Node.js. Cheats und experimentelle Funktionen sind für dieses Add-on nicht erforderlich. Auch das separate Lumen-Grafikpaket wird nicht benötigt.
 
@@ -37,7 +37,7 @@ Andernfalls gibt es diese Möglichkeiten:
 ### 3. In Minecraft importieren
 
 1. Starte **Minecraft für Windows** und bleibe im Hauptmenü.
-2. Öffne im Windows-Explorer den Ordner mit `Lumen-Silent-Birds-0.2.0.mcaddon`.
+2. Öffne im Windows-Explorer den Ordner mit `Lumen-Silent-Birds-0.2.1.mcaddon`.
 3. Öffne die Datei per **Doppelklick**. Falls Windows nach einer Anwendung fragt, wähle **Minecraft**. Alternativ verwende **Rechtsklick → Öffnen mit → Minecraft**, sofern angeboten.
 4. Warte, bis Minecraft den erfolgreichen Import meldet. Die Datei enthält zwei Pakete: ein **Verhaltenspaket** für die Tiere und ihre Bewegung und ein **Ressourcenpaket** für ihr Aussehen.
 
@@ -66,6 +66,10 @@ Eine vollständige Gruppe enthält **zwei Raben, eine Blaumeise, ein Rotkehlchen
 
 Die [zusätzliche Windows-Checkliste für Eulen und Uhus](docs/OWL_VALIDATION.md) beschreibt die Prüfung von Sitzplätzen, Leuchtaugen, Animationen und Tag-/Nachtwechsel.
 
+Im aktuellen Entwicklungsstand findet eine ergänzte Suche auch kleine Baumkronen
+zwischen den bisherigen Suchpunkten. Zwei freie, mindestens zwei Blöcke
+auseinanderliegende Laubplätze bleiben erforderlich.
+
 Im Nether und im Ende erscheinen weiterhin keine Gruppen. Dass alle Vögel einschließlich Eulen und Uhus keine eigenen Geräusche machen, ist beabsichtigt.
 
 ### 6. Die Fische finden
@@ -75,6 +79,10 @@ Gehe im aktuellen Entwicklungsstand an einen See, einen breiten Fluss oder einen
 Tagsüber schwimmen **zwei Forellen und zwei Karpfen** zusammen. In Dämmerung und Nacht übernehmen **zwei dunkle Hechte mit gelben, selbstleuchtenden Augen**. Die Augen beleuchten keine umliegenden Blöcke. Flache Pfützen, enge Rinnen, Lava, dünne Wasserströme und mit Wasser gefüllte feste Blöcke sind keine Schwimmräume. Wasserpflanzen können den freien Raum verkleinern; teste zunächst in einem freien Becken.
 
 Für deinen Windows-Test gibt es eine [Fisch-Prüfliste](docs/FISH_VALIDATION.md) mit Wasser-, Tageszeit-, Darstellungs- und Fehlerprüfungen.
+
+Im aktuellen Entwicklungsstand werden kleine freie Becken auch dann gefunden,
+wenn ihre Mitte zwischen den bisherigen Suchpunkten liegt. Die Suche bleibt auf
+zwölf Blöcke in X-/Z-Richtung um dich und ähnliche Höhe begrenzt.
 
 ### 7. Das Tiefenmaul und sein Bauch-Abenteuer
 
@@ -86,6 +94,10 @@ Nacht in der Oberwelt erscheinen. Suche in einem tiefen, freien Ozeanbereich: Se
 benötigt ungefähr **29 × 29 Blöcke freie Wasserfläche und 17 Blöcke Tiefe**.
 Auch ein entsprechend großes künstliches Becken ist geeignet; es gibt keinen
 Biomefilter. Suche und Darstellung im Spiel sind noch nicht abgenommen.
+
+Im aktuellen Entwicklungsstand prüft die Suche zusätzlich die bisher
+übersprungenen Höhen bis 24 Blöcke unter deiner Position. Damit können auch
+geeignete Bereiche mit genau 17 Wasserlagen vom Ufer aus gefunden werden.
 
 Beim normalen Unterwasser-Monster gilt: Schwimme in Survival oder Adventure direkt vor das Maul. Gerätst du in die
 Maulöffnung, wirst du in den hohlen Bauch versetzt. Das Monster hält währenddessen
@@ -227,7 +239,7 @@ python -m unittest discover -s tests -v
 python scripts/build.py
 ```
 
-Unter Windows kann `py -3` statt `python` verwendet werden, etwa `py -3 scripts/build.py`. Öffne nach erfolgreichem Build `dist/Lumen-Silent-Birds-0.2.0.mcaddon` wie in Schritt 3 beschrieben. Für die vorbereitete Abenteuerwelt öffne stattdessen `dist/Lumen-Tiefsee-Abenteuer-0.2.0.mcworld`; sie bringt beide Pakete mit. Der Build erzeugt außerdem ein eigenständig nutzbares Quellcode-ZIP und SHA-256-Prüfsummen in `dist/`. Die Archive haben feste Zeitstempel und werden bei unverändertem Quellstand bytegleich gebaut.
+Unter Windows kann `py -3` statt `python` verwendet werden, etwa `py -3 scripts/build.py`. Öffne nach erfolgreichem Build `dist/Lumen-Silent-Birds-0.2.1.mcaddon` wie in Schritt 3 beschrieben. Für die vorbereitete Abenteuerwelt öffne stattdessen `dist/Lumen-Tiefsee-Abenteuer-0.2.1.mcworld`; sie bringt beide Pakete mit. Der Build erzeugt außerdem ein eigenständig nutzbares Quellcode-ZIP und SHA-256-Prüfsummen in `dist/`. Die Archive haben feste Zeitstempel und werden bei unverändertem Quellstand bytegleich gebaut.
 
 `src/` enthält die Tier- und Abenteuersteuerung sowie die Prüfungen für Sitzplätze und Wasser. `scripts/generate.py` pflegt Modelle, Farbpaletten, Animationen, Manifest und Entitätskomponenten; `scripts/deep_sea.py` erzeugt Biom, Becken und Nebel. `behavior_pack/` und `resource_pack/` werden daraus erzeugt; direkte Änderungen dort werden beim Build ersetzt. `docs/PREVIEW.svg` wird aus derselben Modellgeometrie mit vereinfachter Beleuchtung und festen Posen gerendert. UUIDs bei Updates beibehalten und für einen neuen Releasekandidaten die Versionsnummer in Generator und `package.json` synchron erhöhen.
 

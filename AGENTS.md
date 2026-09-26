@@ -5,11 +5,40 @@ Himmelsvögel**. Das optionale Grafikprojekt `minecraft-look` wird separat
 entwickelt und versioniert; für Build, Test und Release ist dessen Checkout
 nicht erforderlich.
 
+## Verbindlicher Abschluss jeder Änderung
+
+Nach jeder abgeschlossenen Änderung ist der vollständige Ablauf auszuführen:
+**Review → gefundene Bugs beheben → betroffene Prüfungen und erneutes Review →
+Commit und Push → grüne CI des gepushten Commits → neuer versionierter
+GitHub-Release → Branch-Bereinigung.** Zusammengehörige Anpassungen eines
+Auftrags bilden einen Änderungsstand; der Ablauf gilt auch für reine
+Dokumentationsänderungen. Reviewbefunde vor dem Release beheben und die
+Korrekturen erneut prüfen.
+
+Dies ist die dauerhafte Autorisierung für Commit, Push, den neuen annotierten
+Release-Tag, die Erstellung und Vervollständigung des GitHub-Release-Entwurfs
+sowie das Aufräumen erledigter Arbeitsbranches. Dafür keine erneute Bestätigung
+einholen. Ausdrückliche Einschränkungen im jeweiligen Nutzerauftrag gehen vor.
+Auch bei Dokumentationsänderungen sind für den neuen Release die vollständigen
+Kandidatengates unter `docs/RELEASING.md` erforderlich.
+
+Ohne dokumentierte Windows-/Bedrock-Abnahme den neuen Release als vollständigen
+Entwurf anlegen. Eine ausdrücklich beauftragte öffentliche Testversion als
+Pre-release mit sichtbaren offenen Prüfungen veröffentlichen; eine stabile
+Freigabe setzt die Abnahme voraus. Veröffentlichte Tags und Artefakte erhalten.
+
+Nach erfolgreichem Push und Release erledigte Branches lokal und auf GitHub
+löschen sowie veraltete Remote-Tracking-Refs bereinigen. Vorher Remote-Stand,
+offene Pull Requests, Merge-/Commit-Zuordnung und verwendete Worktrees prüfen.
+Nur Branches entfernen, deren Arbeit nachweislich übernommen oder ausdrücklich
+verworfen wurde. `main`, andere geschützte Branches sowie noch verwendete oder
+nicht übernommene Arbeiten erhalten; keine pauschale erzwungene Löschung.
+
 ## Arbeitsablauf bei Änderungen
 
 1. **Auftrag und Ausgangsstand prüfen.** Git-Status, Branch und vorhandene
-   Änderungen lesen. Umfang von Korrektur, Commit/Push und Release aus dem
-   Nutzerauftrag ableiten; bereits erteilte Autorisierung weiter beachten.
+   Änderungen lesen. Auftrag und dauerhafte Autorisierung für Commit/Push,
+   Release und Branch-Bereinigung beachten.
    Fremde Änderungen erhalten und keine unbekannten Dateien pauschal übernehmen.
 2. **Praxisrelevante Fehler belegen.** Betroffene Quellen, Aufrufer und Tests
    untersuchen. Konkreten Auslöser, tatsächliches Verhalten und erwartetes
@@ -26,20 +55,22 @@ nicht erforderlich.
    Die Produktversion erst für einen neuen Releasekandidaten erhöhen.
 5. **Passend prüfen.** Bei Code-, Paket-, CI- oder Releasewerkzeugänderungen
    die Befehle unter „Prüfung“ ausführen. Bei reinen Dokumentationsänderungen
-   genügen Inhalts-, Link- und Diffprüfung. Tests erst nach weiteren Änderungen,
-   Fehlern oder offenen Befunden erneut ausführen.
+   genügen zunächst Inhalts-, Link- und Diffprüfung; vor dem neuen Release
+   zusätzlich die Kandidatengates ausführen. Tests erst nach weiteren Änderungen,
+   Fehlern, offenen Befunden oder einem erforderlichen Releasegate erneut ausführen.
 6. **Den vollständigen Diff reviewen.** `git diff --check` ausführen; Quellen,
    generierte Dateien, Tests und Dokumentation gemeinsam prüfen. UUIDs,
    Versionsgleichheit und unveränderte Verhaltensgrenzen kontrollieren. Private
    Dateien, lokale Umgebungen, Logs und `dist/` nicht einchecken.
-7. **Im autorisierten Umfang abschließen.** Vor dem Commit den gestagten Diff
-   prüfen. Nach einem beauftragten Push den entfernten Commit und die CI für
-   genau diesen Stand kontrollieren; CI-Fehler untersuchen und beheben. Ein Push
-   allein ist noch keine erfolgreiche Prüfung und erzeugt keinen Releaseauftrag.
+7. **Committen, pushen und neuen Release erstellen.** Vor dem Commit den
+   gestagten Diff prüfen. Nach dem Push den entfernten Commit und die CI für
+   genau diesen Stand kontrollieren; CI-Fehler untersuchen und beheben.
+   Anschließend den Releaseablauf vollständig ausführen und erledigte Branches
+   lokal und auf GitHub bereinigen.
 8. **Ergebnis nachvollziehbar berichten.** Behobene Fehler, ausgeführte Tests,
-   offene In-Game-Prüfungen sowie gegebenenfalls Commit, CI-Link und erreichten
-   Releasestatus nennen. Bei einem Releaseauftrag zusätzlich den folgenden
-   Ablauf unter „Release und Skills“ vollständig ausführen.
+   offene In-Game-Prüfungen, Commit, CI-Link, neuen Release und erreichten
+   Releasestatus nennen. Gelöschte Branches sowie begründet erhaltene offene
+   Arbeiten oder eine bereits aufgeräumte Branch-Liste dokumentieren.
 
 ## Quellen und Änderungen
 
@@ -138,10 +169,10 @@ Windows-Prüfung steht in `docs/VALIDATION.md`; Kandidatenbelege nach
 Änderungen zunächst in `CHANGELOG.md` unter `Unreleased` erfassen. Versionierung,
 Tags nach `birds-vX.Y.Z`, Abnahme, Veröffentlichung und Hotfixes richten sich nach
 `docs/RELEASING.md`. Neue Arbeitsbranches verwenden `codex/` als Präfix. Externe
-Aktionen nur im Umfang des Nutzerauftrags ausführen; Releasevorbereitung allein
-ist keine Veröffentlichung. Bereits erteilte Autorisierung gilt weiter.
+Aktionen im Umfang der dauerhaften Autorisierung und des Nutzerauftrags
+ausführen. Die standardmäßige Entwurfserstellung ist keine öffentliche Freigabe.
 
-Für einen beauftragten Release:
+Für den nach jeder abgeschlossenen Änderung erforderlichen neuen Release:
 
 1. Vorhandene lokale und entfernte Tags sowie GitHub-Releases prüfen. Eine neue,
    passende Version wählen; veröffentlichte Tags und Artefakte nicht ersetzen.

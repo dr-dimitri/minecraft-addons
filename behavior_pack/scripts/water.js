@@ -41,17 +41,33 @@ export function findWaterHabitat(dimension, player) {
   for (let x = -12; x <= 12; x += 4) for (let z = -12; z <= 12; z += 4) offsets.push({x, z});
   offsets.sort((a, b) => a.x * a.x + a.z * a.z - b.x * b.x - b.z * b.z);
   const cache = new Map();
-  // Search near the player's height, including underwater players. This avoids
-  // scanning whole world columns or depending on an exposed water surface.
-  for (const offset of offsets) for (const dy of [-1, 0, -2, 1, -3, 2, -4, -5, -6]) {
-    const x = base.x + offset.x, y = base.y + dy, z = base.z + offset.z;
-    if (y - 1 < dimension.heightRange.min || y >= dimension.heightRange.max) continue;
+  const visited = new Set(), wetCandidates = [];
+  function inspect(x, y, z, coarse = false) {
+    if (Math.abs(x - base.x) > 12 || Math.abs(z - base.z) > 12
+      || y - 1 < dimension.heightRange.min || y >= dimension.heightRange.max) return undefined;
+    const key = x + ',' + y + ',' + z;
+    if (visited.has(key)) return undefined;
+    visited.add(key);
     try {
-      if (!waterAt(dimension, x, y, z, cache)) continue;
+      if (!waterAt(dimension, x, y, z, cache)) return undefined;
+      if (coarse) wetCandidates.push({x, y, z});
       const habitat = {x: x + .5, y: y - .2, z: z + .5, radius: SWIM_RADIUS};
       if (waterVolume(dimension, habitat, SWIM_RADIUS + FISH_HALF_WIDTH,
         FISH_HALF_HEIGHT + SWIM_BOB, cache)) return habitat;
     } catch { /* A missing column cannot hide a loaded pool elsewhere nearby. */ }
+    return undefined;
+  }
+  // Search near the player's height, including underwater players. This avoids
+  // scanning whole world columns or depending on an exposed water surface.
+  for (const offset of offsets) for (const dy of [-1, 0, -2, 1, -3, 2, -4, -5, -6]) {
+    const habitat = inspect(base.x + offset.x, base.y + dy, base.z + offset.z, true);
+    if (habitat) return habitat;
+  }
+  // Every clear 5x5 route intersects the coarse grid, but its safe center may
+  // be up to two blocks away. Refine only wet hits and keep the same search area.
+  for (const at of wetCandidates) for (let dx = -2; dx <= 2; dx++) for (let dz = -2; dz <= 2; dz++) {
+    const habitat = inspect(at.x + dx, at.y, at.z + dz);
+    if (habitat) return habitat;
   }
   return undefined;
 }

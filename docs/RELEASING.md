@@ -5,6 +5,13 @@ Release-Entwurf → Prüfung in Minecraft → bewusste Veröffentlichung. Ein gr
 Build ist eine technische Paketprüfung und ersetzt die Prüfung im Spiel nicht.
 Alle Schritte sind in diesem Repository ausführbar.
 
+Nach jeder abgeschlossenen Änderung ist dieser Ablauf gemäß `AGENTS.md`
+verbindlich, einschließlich Bugfixing nach dem Review, Commit/Push, neuem
+GitHub-Release und Bereinigung erledigter Branches. Das gilt auch für reine
+Dokumentationsänderungen. Die dauerhafte Autorisierung umfasst den vollständigen
+Release-Entwurf; öffentliche Testversionen und stabile Freigaben richten sich
+weiter nach den unten beschriebenen Voraussetzungen.
+
 ## Produkt und Version
 
 | Produkt | Versionsquelle | Weitere Versionsstellen | Tag | Artefakte |
@@ -79,7 +86,7 @@ Im Git-Checkout verlangt es einen sauberen, vollständig eingecheckten Stand;
 die Versionsnummer im Beispiel durch die des Kandidaten ersetzen:
 
 ```sh
-python3 scripts/check_candidate.py --tag birds-v0.2.0
+python3 scripts/check_candidate.py --tag birds-v0.2.1
 ```
 
 Ohne `--tag` eignet es sich auch für normale Entwicklungscommits. Es prüft
@@ -124,15 +131,16 @@ genügt nicht zur Freigabe des Entwurfsjobs.
 Beispiel für die lokale Tagprüfung (Version an den Kandidaten anpassen):
 
 ```sh
-python3 scripts/check_release.py --tag birds-v0.2.0
+python3 scripts/check_release.py --tag birds-v0.2.1
 ```
 
-Vor dem Tag das Review und die grüne CI des vorgesehenen Commits prüfen. Ein
-autorisierter Releaseauftrag umfasst das Erstellen/Pushen des zugehörigen
-annotierten Tags und die Erstellung des Entwurfs. Ein bloßer Auftrag zur
-Vorbereitung endet lokal, sofern Tag-Push oder ein entfernter Entwurf nicht
-ebenfalls beauftragt sind. Bestehende Tags, Releases und Dateien vor Mutationen
-prüfen; bekannte Autorisierung nicht erneut erfragen.
+Vor dem Tag das Review und die grüne CI des vorgesehenen Commits prüfen.
+`AGENTS.md` autorisiert nach jedem abgeschlossenen Änderungsauftrag das
+Erstellen/Pushen des zugehörigen annotierten Tags und die Erstellung des
+vollständigen Entwurfs. Nur eine ausdrückliche Einschränkung im aktuellen
+Auftrag begrenzt diesen Ablauf, beispielsweise eine ausschließlich lokale
+Vorbereitung. Bestehende Tags, Releases und Dateien vor Mutationen prüfen;
+bekannte Autorisierung nicht erneut erfragen.
 
 Nach Tag-Push den Workflowlauf und Entwurf prüfen. Ein fehlgeschlagener oder
 teilweise ausgeführter Upload bleibt ein Entwurf. Bei erneutem Lauf vorhandene
@@ -168,6 +176,15 @@ Dateien veröffentlichen. Danach Release herunterladen und Prüfsummen sowie
 sichtbare Version/Tag/Status kontrollieren. Automatische Tests erzwingen die
 technische Seite; Review, Tagberechtigung und reale Abnahme benötigen zusätzlich
 den eingehaltenen Prozess bzw. Repository-Einstellungen.
+
+## Branches nach dem Release aufräumen
+
+Nach erfolgreichem Push und vollständigem Release erledigte Arbeitsbranches
+lokal und auf GitHub entfernen. Vorher aktuelle Remote-Refs, offene Pull
+Requests, übernommene Commits und Worktree-Belegung prüfen. Standard- und
+geschützte Branches sowie laufende oder nicht übernommene Arbeiten erhalten.
+Veraltete Remote-Tracking-Refs mit `git fetch --prune origin` bereinigen.
+Gelöschte Branches oder eine bereits aufgeräumte Branch-Liste im Ergebnis nennen.
 
 ## Fehler nach einem Release
 

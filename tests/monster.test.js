@@ -7,12 +7,12 @@ function fixture(count = 1) {
   let serial = 0;
   const entities = new Map();
   const dim = {id: 'minecraft:overworld', heightRange: {min: -64, max: 320},
-    reads: 0, medium: 'minecraft:water', waterBottom: 0, loaded: true, removalFails: false, failSpawn: false,
+    reads: 0, medium: 'minecraft:water', waterBottom: 0, waterTop: 63, loaded: true, removalFails: false, failSpawn: false,
     failMove: false, blocks: new Map(),
     getBlock({x, y, z}) {
       this.reads++;
       if (!this.loaded) throw new Error('Unloaded');
-      const typeId = this.blocks.get([x, y, z].join(',')) ?? (y >= this.waterBottom && y < 63 ? this.medium : 'minecraft:air');
+      const typeId = this.blocks.get([x, y, z].join(',')) ?? (y >= this.waterBottom && y < this.waterTop ? this.medium : 'minecraft:air');
       return {typeId, isAir: typeId === 'minecraft:air', permutation: {getState: () => 0}};
     },
     getEntities({type}) { return [...entities.values()].filter(e => e.typeId === type); },
@@ -84,6 +84,36 @@ test('giant habitat requires deep open water and uses bounded reads', () => {
   assert.equal(isMonsterPositionSafe(f.dim, at), true);
   f.dim.blocks.set('11,30,0', 'minecraft:stone');
   assert.equal(isMonsterPositionSafe(f.dim, at), false);
+});
+
+test('intermediate depths find a complete giant route in seventeen water layers', () => {
+  for (const shift of [0, -64]) for (let y = 55; y <= 78; y++) {
+    const f = fixture(); f.dim.waterBottom = 46 + shift; f.dim.waterTop = 63 + shift;
+    f.players[0].location.y = y + shift;
+    const habitat = findMonsterHabitat(f.dim, f.players[0]);
+    assert.ok(habitat, `player height ${y + shift}`);
+    assert.equal(habitat.y, 54.5 + shift);
+    assert.ok(f.dim.reads <= MONSTER_SEARCH_BUDGET);
+    if (y === 63 || y === 64) {
+      f.tick(0);
+      assert.equal(f.manager.swimmers.size, 1);
+    }
+  }
+});
+
+test('intermediate depth search still rejects sixteen water layers within its budget', () => {
+  const f = fixture(); f.dim.waterBottom = 47;
+  assert.equal(findMonsterHabitat(f.dim, f.players[0]), undefined);
+  assert.ok(f.dim.reads <= MONSTER_SEARCH_BUDGET);
+});
+
+test('intermediate depth refinement does not exhaust the budget before a clear neighboring route', () => {
+  const f = fixture();
+  for (let y = 0; y < 63; y++) f.dim.blocks.set([-1, y, 9].join(','), 'minecraft:stone');
+  const habitat = findMonsterHabitat(f.dim, f.players[0]);
+  assert.ok(habitat);
+  assert.equal(habitat.x, 16.5);
+  assert.ok(f.dim.reads <= MONSTER_SEARCH_BUDGET);
 });
 
 test('one giant stays independent of fish and bird budgets, at all times of day', () => {

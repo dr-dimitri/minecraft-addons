@@ -167,6 +167,43 @@ test('a single small tree crown provides two perches even with only one coarse g
   assert.ok(distanceSquared(...perches) >= 4);
 });
 
+test('off-grid small crowns supply two separated night perches at every player alignment', () => {
+  for (const origin of [0, -20]) for (let dx = 0; dx < 4; dx++) for (let dz = 0; dz < 4; dz++) {
+    const f = fixture();
+    for (let x = 1; x <= 3; x++) for (let z = 1; z <= 3; z++) {
+      f.dim.trees.set((origin + x) + ',' + (origin + z), {y: 70, typeId: 'minecraft:azalea_leaves'});
+    }
+    f.world.players[0].location = {x: origin + dx + .5, y: 64, z: origin + dz + .5};
+    f.world.time = 18000; f.manager.tick(0);
+    assert.equal(f.entities.size, 2, `offset ${dx},${dz}`);
+    const perches = [...f.manager.flights.values()].map(flight => flight.perch);
+    assert.ok(distanceSquared(...perches) >= 4);
+    for (let tick = 1; tick <= 100; tick++) f.manager.tick(tick);
+    assert.equal(f.entities.size, 2);
+  }
+});
+
+test('perch refinement stays local and rejects adjacent or newly obstructed seats', () => {
+  for (const obstacle of ['no leaves', 'adjacent seats', 'blocked headroom', 'high terrain']) {
+    const f = fixture();
+    if (obstacle !== 'no leaves') {
+      f.dim.trees.set('1,1', {y: 70, typeId: 'minecraft:oak_leaves'});
+      f.dim.trees.set((obstacle === 'adjacent seats' ? 2 : 3) + ',1', {y: 70, typeId: 'minecraft:oak_leaves'});
+    }
+    if (obstacle === 'blocked headroom') f.dim.blocked.add('3,72,1');
+    if (obstacle === 'high terrain') f.dim.trees.set('1,-1', {y: 316, typeId: 'minecraft:stone'});
+    const topmost = f.dim.getTopmostBlock.bind(f.dim);
+    let columns = 0;
+    f.dim.getTopmostBlock = at => {
+      columns++;
+      return topmost(at);
+    };
+    f.world.time = 18000; f.manager.tick(0);
+    assert.equal(f.entities.size, 0, obstacle);
+    assert.ok(columns <= 626); // 25x25 search columns plus the player's roof check.
+  }
+});
+
 test('an unsuitable lower tree does not prevent two perches on a usable tall crown', () => {
   for (const lowerTree of [false, true]) {
     const f = fixture();

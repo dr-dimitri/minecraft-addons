@@ -61,18 +61,26 @@ export function findPerches(dimension, player) {
   }
   for (const offset of offsets) inspect(Math.floor(at.x) + offset.x, Math.floor(at.z) + offset.z);
   const reachable = perch => perch.y >= dimension.heightRange.min && highest + 8 - perch.y <= 24;
-  const usable = candidates.filter(reachable);
-  // A small crown may offer the only reachable coarse-grid perch. Unsuitable
-  // lower trees must not suppress the search for a second seat on that crown.
-  if (usable.length === 1) {
-    const {x, z} = usable[0].support;
-    for (let dx = -2; dx <= 2; dx++) for (let dz = -2; dz <= 2; dz++) {
-      if (dx * dx + dz * dz >= 4) inspect(x + dx, z + dz);
+  function choosePerches() {
+    const usable = candidates.filter(reachable);
+    for (let i = 0; i < usable.length; i++) for (let j = i + 1; j < usable.length; j++) {
+      if ((usable[i].x - usable[j].x) ** 2 + (usable[i].z - usable[j].z) ** 2 >= 4) {
+        return [usable[i], usable[j]];
+      }
     }
+    return [];
+  }
+  // Small crowns can fall entirely between coarse samples. Inspect the missing
+  // columns when no pair was found, with at most 25x25 columns in the same area.
+  // Select a separated pair: the nearest leaf may sit between both usable seats.
+  if (choosePerches().length === 0) {
+    const fine = [];
+    for (let x = -12; x <= 12; x++) for (let z = -12; z <= 12; z++) fine.push({x, z});
+    fine.sort((a, b) => a.x * a.x + a.z * a.z - b.x * b.x - b.z * b.z);
+    for (const offset of fine) inspect(Math.floor(at.x) + offset.x, Math.floor(at.z) + offset.z);
   }
   const cruiseY = highest + 8;
   if (cruiseY + 2 >= dimension.heightRange.max) return [];
-  // Neighbor probes can reveal higher terrain; recheck every perch afterward.
-  return candidates.filter(reachable)
-    .slice(0, 2).map(p => ({...p, cruiseY}));
+  // Fine probes can reveal higher terrain; recheck every perch afterward.
+  return choosePerches().map(p => ({...p, cruiseY}));
 }

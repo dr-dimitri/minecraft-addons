@@ -13,7 +13,7 @@ Verhaltenstests ersetzen keine erfolgreiche Import- oder Spielprüfung.
 ## Öffnen unter Windows
 
 1. Minecraft für Windows (Bedrock) ab **1.21.110** verwenden.
-2. `Lumen-Tiefsee-Abenteuer-0.2.0.mcworld` aus dem aktuellen Kandidatenbuild
+2. `Lumen-Tiefsee-Abenteuer-0.2.1.mcworld` aus dem aktuellen Kandidatenbuild
    auf den Windows-PC kopieren und doppelklicken beziehungsweise mit Minecraft öffnen.
 3. Nach dem Import unter **Spielen → Welten** die Welt **Lumen · Tiefsee-Abenteuer**
    auswählen. Beide benötigten Pakete sind bereits der Welt zugeordnet.
@@ -21,7 +21,7 @@ Verhaltenstests ersetzen keine erfolgreiche Import- oder Spielprüfung.
    Die Bildschirmanzeige nennt anschließend die Fundorte.
 
 Es ist keine zusätzliche Installation der `.mcaddon` nötig. Die Welt ist ein
-Teil des Releasekandidaten 0.2.0. Die Prüfung in Bedrock steht noch aus;
+Teil des Releasekandidaten 0.2.1. Die Prüfung in Bedrock steht noch aus;
 Experimente sind ausgeschaltet.
 
 ## Dörfer und Ausrüstung

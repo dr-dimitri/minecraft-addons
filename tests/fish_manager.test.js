@@ -72,6 +72,21 @@ test('day pools receive two trout and two carp with separated initial positions'
   }
 });
 
+test('off-grid ponds spawn both daytime fish and night pike without player movement', () => {
+  for (const time of [6000, 18000]) {
+    const f = fixture();
+    const getBlock = f.dim.getBlock.bind(f.dim);
+    f.dim.getBlock = at => Math.abs(at.x) <= 2 && Math.abs(at.z) <= 2 && at.y >= 61 && at.y <= 62
+      ? getBlock(at) : {typeId: 'minecraft:air', isAir: true};
+    f.world.players[0].location = {x: 3.5, y: 64, z: 1.5};
+    f.world.time = time; f.manager.tick(0);
+    assert.deepEqual([...f.entities.values()].map(e => e.typeId.split(':')[1]),
+      time === 6000 ? DAY_FISH : NIGHT_FISH);
+    for (let tick = 1; tick <= 100; tick++) f.manager.tick(tick);
+    assert.equal(f.entities.size, time === 6000 ? 4 : 2);
+  }
+});
+
 test('fish swim on bounded continuous circles facing their horizontal movement', () => {
   const habitat = {x: -12.5, y: 58.8, z: 13.5, radius: 1.5};
   for (const species of FISH_SPECIES) for (const phase of [0, 1.7, 5.8]) {

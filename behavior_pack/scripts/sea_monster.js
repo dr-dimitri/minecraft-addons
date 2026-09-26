@@ -15,6 +15,11 @@ export function findMonsterHabitat(dimension, player) {
   if (!Object.values(player.location).every(Number.isFinite)) return undefined;
   const base = player.location;
   const cache = new Map();
+  // Check the usual depths at every location before spending the remaining
+  // budget on intermediate heights. A 17-layer pool may have only one safe
+  // vertical center; an obstructed column must not starve clear neighbors.
+  const intermediate = [];
+  for (let dy = -1; dy >= -24; dy--) if (dy % 8 !== 0) intermediate.push(dy);
   // Bound total block reads across all candidates, even in obstructed water.
   let reads = 0;
   const bounded = {
@@ -25,16 +30,18 @@ export function findMonsterHabitat(dimension, player) {
       return dimension.getBlock(at);
     },
   };
-  for (const [dx, dz] of [[0, 0], [16, 0], [-16, 0], [0, 16], [0, -16],
-    [16, 16], [-16, 16], [16, -16], [-16, -16]]) {
-    for (const dy of [-8, -16, -24, 0]) {
-      if (reads >= MONSTER_SEARCH_BUDGET) return undefined;
-      const habitat = {x: Math.floor(base.x) + dx + .5, y: Math.floor(base.y) + dy + .5,
-        z: Math.floor(base.z) + dz + .5, radius: MONSTER_RADIUS};
-      try {
-        if (waterVolume(bounded, habitat, MONSTER_RADIUS + MONSTER_HALF_WIDTH,
-          MONSTER_HALF_HEIGHT + MONSTER_BOB, cache)) return habitat;
-      } catch { /* Missing chunks are never loaded; try another local candidate. */ }
+  for (const heights of [[-8, -16, -24, 0], intermediate]) {
+    for (const [dx, dz] of [[0, 0], [16, 0], [-16, 0], [0, 16], [0, -16],
+      [16, 16], [-16, 16], [16, -16], [-16, -16]]) {
+      for (const dy of heights) {
+        if (reads >= MONSTER_SEARCH_BUDGET) return undefined;
+        const habitat = {x: Math.floor(base.x) + dx + .5, y: Math.floor(base.y) + dy + .5,
+          z: Math.floor(base.z) + dz + .5, radius: MONSTER_RADIUS};
+        try {
+          if (waterVolume(bounded, habitat, MONSTER_RADIUS + MONSTER_HALF_WIDTH,
+            MONSTER_HALF_HEIGHT + MONSTER_BOB, cache)) return habitat;
+        } catch { /* Missing chunks are never loaded; try another local candidate. */ }
+      }
     }
   }
   return undefined;

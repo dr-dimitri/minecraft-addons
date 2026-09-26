@@ -41,6 +41,30 @@ test('a two-block-deep clear pond supplies a complete submerged swimming route',
   }
 });
 
+test('off-grid minimum ponds are found from every nearby player alignment', () => {
+  for (const origin of [0, -20]) for (let dx = 0; dx < 4; dx++) for (let dz = 0; dz < 4; dz++) {
+    const f = pond(); f.fill(origin - 2, origin + 2, 62, 63, origin - 2, origin + 2);
+    f.player.location = {x: origin + dx + .5, y: 64, z: origin + dz + .5};
+    assert.deepEqual(findWaterHabitat(f.dimension, f.player),
+      {x: origin + .5, y: 62.8, z: origin + .5, radius: 1.5}, `offset ${dx},${dz}`);
+    // Refinement still needs the complete route, not just a water center.
+    f.blocks.delete([origin, 62, origin].join(','));
+    assert.equal(findWaterHabitat(f.dimension, f.player), undefined);
+  }
+});
+
+test('refining obstructed water stays bounded and does not reuse water after a tick', () => {
+  const f = pond(); f.fill(-14, 14, 62, 63, -14, 14);
+  for (let x = -12; x <= 12; x += 4) for (let z = -12; z <= 12; z += 4) {
+    f.blocks.set([x, 62, z].join(','), {typeId: 'minecraft:stone'});
+  }
+  assert.equal(findWaterHabitat(f.dimension, f.player), undefined);
+  // Search centers stay within +/-12; the route adds two blocks at each edge.
+  assert.ok(f.dimension.reads <= 29 * 29 * 10);
+  f.fill(-2, 2, 62, 63, -2, 2);
+  assert.ok(findWaterHabitat(f.dimension, f.player));
+});
+
 test('shallow puddles, narrow channels and interrupted routes cannot spawn fish', () => {
   for (const fill of [f => f.fill(-8, 8, 63, 63, -8, 8),
     f => f.fill(-1, 1, 60, 63, -12, 12),

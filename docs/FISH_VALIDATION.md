@@ -1,6 +1,6 @@
 # Forellen, Karpfen und Hechte auf Windows prüfen
 
-Diese Prüfung gehört zum Releasekandidaten `0.2.0`. Der alte
+Diese Prüfung gehört zum Releasekandidaten `0.2.1`. Der alte
 Kandidat `birds-v0.1.1` enthält keine Fische. Vor einer Abnahme Quellcommit,
 neue Kandidatenversion, CI-Lauf und SHA-256 der tatsächlich installierten Datei
 nach [releases/TEMPLATE.md](releases/TEMPLATE.md) festhalten. Lokale Tests und die
@@ -12,6 +12,11 @@ nach [releases/TEMPLATE.md](releases/TEMPLATE.md) festhalten. Lokale Tests und d
 2. Tagsüber an einem freien Seeufer oder einem mindestens etwa 5 × 5 Blöcke
    breiten, zwei Blöcke tiefen Quellwasserbecken warten. Zwei Forellen und zwei
    Karpfen sollen erscheinen. Formen, Muster und Flossenbewegung vergleichen.
+   Mit 0.2.1 auch ein genau 5 × 5 × 2 großes freies
+   Becken von mehreren um ein bis drei Blöcke versetzten Uferpositionen testen,
+   einschließlich negativer Koordinaten. Je Position ohne bestehende Gruppe
+   starten und höchstens fünf Sekunden stillstehen. Die Beckenmitte muss auch
+   zwischen den bisherigen Suchpunkten gefunden werden.
 3. Dämmerung und Nacht prüfen: Ab Tick 11500 übernehmen zwei dunkle Hechte mit
    gelben Leuchtaugen. Ab Tick 500 erscheinen wieder Tagesfische. Augen aus
    mehreren Richtungen ansehen; der übrige Körper soll normal beleuchtet sein.

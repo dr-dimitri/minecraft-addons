@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+## [0.2.1] - Kandidat
+
+- Drei Spawn-Lücken behoben: Fische finden kleine freie Becken auch zwischen
+  den bisherigen Suchpunkten; Eulen und Uhus finden zwei getrennte Sitzplätze
+  auf kleinen Baumkronen ohne vorherigen Rastertreffer. Das Tiefenmaul prüft
+  zusätzlich die übersprungenen Höhen und findet dadurch geeignete Bereiche
+  mit 17 Wasserlagen auch vom Ufer aus.
+- Im abschließenden Review einen weiteren Suchfehler behoben: Das Tiefenmaul
+  prüft zuerst die bisherigen Tiefen an allen Nachbarpositionen. Eine blockierte
+  Position verbraucht damit nicht vorzeitig das Budget durch die neue Nachsuche.
+- Regressionstests für versetzte Spielerpositionen, negative Koordinaten und
+  unterschiedliche Wassertiefen ergänzt. Wasserhüllen, Tierlimits und das
+  Suchbudget des Tiefenmauls bleiben erhalten. Die Windows-Prüflisten enthalten
+  die neuen Fälle; deren tatsächliche Bedrock-Abnahme steht aus.
+- Verbindlichen Abschluss jedes Änderungsauftrags in `AGENTS.md` festgehalten:
+  Review, Bugfixing, Prüfungen, Commit/Push, neuer Release und Bereinigung
+  erledigter lokaler und GitHub-Branches. Die Bedrock-Abnahme bleibt Voraussetzung
+  für eine stabile Veröffentlichung.
+
 ## [0.2.0] - Kandidat
 
 - Vier getrennt gespeicherte Wasserdörfer mit Häusern, Bewohnern,

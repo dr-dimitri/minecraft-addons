@@ -9,7 +9,7 @@ from diving import assets as diving_assets, binary_assets as diving_textures, tr
 from mutant_fish import assets as mutant_assets, binary_assets as mutant_textures, translations as mutant_translations
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = [0, 2, 0]
+VERSION = [0, 2, 1]
 ENGINE = [1, 21, 110]  # Stable custom biome replacement; Script API stays 2.0.0.
 RP_UUID = "5ab6115a-55e8-4ba6-8c9a-d2f707667af4"
 BP_UUID = "142232de-2028-4b6e-8048-c41d5ecda537"
