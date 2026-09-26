@@ -16,7 +16,7 @@ function waterAt(dimension, x, y, z, cache) {
   return cache.get(key);
 }
 
-function waterVolume(dimension, center, horizontal, vertical, cache) {
+export function waterVolume(dimension, center, horizontal, vertical, cache) {
   if (![center.x, center.y, center.z].every(Number.isFinite)) return false;
   const minY = Math.floor(center.y - vertical), maxY = Math.floor(center.y + vertical);
   if (minY < dimension.heightRange.min || maxY >= dimension.heightRange.max) return false;

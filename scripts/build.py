@@ -1,4 +1,4 @@
-"""Reproducible .mcaddon and standalone source ZIP, no third-party packages."""
+"""Reproducible add-on, adventure world and source ZIP; no external packages."""
 from io import BytesIO
 from pathlib import Path
 import hashlib
@@ -6,6 +6,7 @@ import zipfile
 from generate import ROOT, VERSION, generate
 from validate import validate
 from preview import create_preview
+from world_template import world_files
 
 
 # Package only project inputs and generated assets, including in a git-free
@@ -69,10 +70,12 @@ def build():
         ])))
     addon = dist / f"Lumen-Silent-Birds-{version}.mcaddon"
     addon.write_bytes(archive(packs))
+    world = dist / f"Lumen-Tiefsee-Abenteuer-{version}.mcworld"
+    world.write_bytes(archive(world_files(ROOT).items()))
     source = dist / f"Lumen-Silent-Birds-Source-{version}.zip"
     source.write_bytes(archive(source_files()))
     lines = []
-    for path in (addon, source):
+    for path in (addon, source, world):
         lines.append(hashlib.sha256(path.read_bytes()).hexdigest() + "  " + path.name)
         print(f"Built {path.name}: {path.stat().st_size:,} bytes")
     (dist / "SHA256SUMS.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")

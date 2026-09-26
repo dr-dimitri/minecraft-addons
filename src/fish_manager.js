@@ -3,9 +3,19 @@ import {FISH_SPECIES, DAY_FISH, NIGHT_FISH, MAX_FISH, MAX_FISH_GROUPS,
   FISH_LIFETIME_TICKS, FISH_INTEREST_DISTANCE, FISH_GROUP_DISTANCE, fishPositionAt} from './fish.js';
 import {findWaterHabitat, isFishPositionSafe} from './water.js';
 
+const FISH_CONFIG = Object.freeze({
+  species: FISH_SPECIES, school: activity => activity === 'night' ? NIGHT_FISH : DAY_FISH,
+  maxEntities: MAX_FISH, maxGroups: MAX_FISH_GROUPS, lifetime: FISH_LIFETIME_TICKS,
+  interestDistance: FISH_INTEREST_DISTANCE, groupDistance: FISH_GROUP_DISTANCE,
+  activityAt, findHabitat: findWaterHabitat, isPositionSafe: isFishPositionSafe,
+  positionAt: fishPositionAt, label: 'fish',
+});
+
+// Each manager has its own entity IDs, budget and water envelope.
 // Fish use their own budget and exact entity IDs, independent of birds and vanilla mobs.
 export class FishManager {
-  constructor(world, report = () => {}) {
+  constructor(world, report = () => {}, config = FISH_CONFIG) {
+    this.config = config;
     this.world = world;
     this.report = report;
     this.swimmers = new Map();
@@ -19,7 +29,7 @@ export class FishManager {
 
   warn(tick) {
     if (tick - this.lastWarning >= 1200) {
-      this.report('Lumen fish: a world operation failed; retrying safely.');
+      this.report(`Lumen ${this.config.label}: a world operation failed; retrying safely.`);
       this.lastWarning = tick;
     }
   }
@@ -38,7 +48,7 @@ export class FishManager {
   }
 
   ownEntities(dimension) {
-    return FISH_SPECIES.flatMap(species => dimension.getEntities({type: 'lumen_birds:' + species}));
+    return this.config.species.flatMap(species => dimension.getEntities({type: 'lumen_birds:' + species}));
   }
 
   sweep(dimension, activity) {
@@ -53,8 +63,8 @@ export class FishManager {
     // Check both ends: draining the pool must retire a fish instead of moving it
     // from air/lava back into the remaining water. The helper checks its whole body.
     if (entity.dimension.id !== dimension.id
-      || !isFishPositionSafe(dimension, entity.location, waterCache)
-      || !isFishPositionSafe(dimension, pose.location, waterCache)) return false;
+      || !this.config.isPositionSafe(dimension, entity.location, waterCache)
+      || !this.config.isPositionSafe(dimension, pose.location, waterCache)) return false;
     return entity.tryTeleport(pose.location, {
       rotation: pose.rotation, keepVelocity: false, checkForBlocks: true,
     });
@@ -62,7 +72,7 @@ export class FishManager {
 
   spawnGroup(dimension, habitat, tick, playerId, activity) {
     const group = {id: ++this.nextGroup, habitat, born: tick, activity};
-    const school = activity === 'night' ? NIGHT_FISH : DAY_FISH;
+    const school = this.config.school(activity);
     const created = [];
     const waterCache = new Map();
     try {
@@ -70,8 +80,8 @@ export class FishManager {
         const species = school[i];
         const phase = (seedFor(playerId + ':' + tick) * Math.PI * 2
           + i * Math.PI * 2 / school.length) % (Math.PI * 2);
-        const pose = fishPositionAt(species, habitat, 0, phase);
-        if (!isFishPositionSafe(dimension, pose.location, waterCache)) throw new Error('Water position unavailable');
+        const pose = this.config.positionAt(species, habitat, 0, phase);
+        if (!this.config.isPositionSafe(dimension, pose.location, waterCache)) throw new Error('Water position unavailable');
         const entity = dimension.spawnEntity('lumen_birds:' + species, pose.location);
         // Register before another API call can fail, so every partial spawn rolls back.
         this.swimmers.set(entity.id, {entity, group, species, phase});
@@ -95,8 +105,8 @@ export class FishManager {
       .sort((a, b) => a.id.localeCompare(b.id));
     for (const [id, group] of this.groups) {
       const nearby = players.some(player => distanceSquared(player.location, group.habitat)
-        <= FISH_INTEREST_DISTANCE ** 2);
-      if (!nearby || tick - group.born >= FISH_LIFETIME_TICKS) {
+        <= this.config.interestDistance ** 2);
+      if (!nearby || tick - group.born >= this.config.lifetime) {
         for (const [entityId, swimmer] of this.swimmers) if (swimmer.group === group) this.retire(entityId);
         this.groups.delete(id);
       }
@@ -105,16 +115,16 @@ export class FishManager {
       : players.findIndex(player => player.id.localeCompare(this.lastServedPlayerId) > 0);
     const candidates = nextPlayer < 0 ? players
       : [...players.slice(nextPlayer), ...players.slice(0, nextPlayer)];
-    const school = activity === 'night' ? NIGHT_FISH : DAY_FISH;
+    const school = this.config.school(activity);
     const nearGroup = location => [...this.groups.values()].some(group =>
-      distanceSquared(group.habitat, location) < FISH_GROUP_DISTANCE ** 2);
+      distanceSquared(group.habitat, location) < this.config.groupDistance ** 2);
     for (const player of candidates) {
-      if (this.groups.size >= MAX_FISH_GROUPS) break;
+      if (this.groups.size >= this.config.maxGroups) break;
       // Failed removals can leave loaded orphans; count them before each attempt.
-      if (MAX_FISH - this.ownEntities(dimension).length < school.length) break;
+      if (this.config.maxEntities - this.ownEntities(dimension).length < school.length) break;
       if (nearGroup(player.location)) continue;
       try {
-        const habitat = findWaterHabitat(dimension, player);
+        const habitat = this.config.findHabitat(dimension, player);
         if (habitat && !nearGroup(habitat)
           && this.spawnGroup(dimension, habitat, tick, player.id, activity)) {
           this.lastServedPlayerId = player.id;
@@ -125,7 +135,7 @@ export class FishManager {
 
   tick(tick) {
     try {
-      const activity = activityAt(this.world.getTimeOfDay());
+      const activity = this.config.activityAt(this.world.getTimeOfDay());
       if (activity !== this.activity) {
         this.retireAll();
         this.activity = activity;
@@ -138,13 +148,14 @@ export class FishManager {
         this.reconcile(dimension, activity, tick);
       }
       if (!activity) return;
+      if (tick % (this.config.moveInterval ?? 1) !== 0) return;
       // One synchronous tick may share block reads, but never reuse them after water changes.
       const waterCache = new Map();
       for (const [id, swimmer] of this.swimmers) {
         const age = tick - swimmer.group.born;
-        if (age < 0 || age >= FISH_LIFETIME_TICKS) { this.retire(id); continue; }
+        if (age < 0 || age >= this.config.lifetime) { this.retire(id); continue; }
         try {
-          const pose = fishPositionAt(swimmer.species, swimmer.group.habitat, age / 20, swimmer.phase);
+          const pose = this.config.positionAt(swimmer.species, swimmer.group.habitat, age / 20, swimmer.phase);
           if (!this.move(dimension, swimmer.entity, pose, waterCache)) this.retire(id);
         } catch { this.retire(id); }
       }

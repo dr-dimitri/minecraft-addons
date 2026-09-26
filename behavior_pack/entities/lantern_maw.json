@@ -1,0 +1,62 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "lumen_birds:lantern_maw",
+      "is_spawnable": false,
+      "is_summonable": true
+    },
+    "component_groups": {
+      "lumen_birds:retire": {
+        "minecraft:instant_despawn": {}
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "lumen_mutant"
+        ]
+      },
+      "minecraft:health": {
+        "value": 12,
+        "max": 12
+      },
+      "minecraft:physics": {
+        "has_gravity": false,
+        "has_collision": true
+      },
+      "minecraft:collision_box": {
+        "width": 0.9,
+        "height": 0.7
+      },
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": false
+      },
+      "minecraft:breathable": {
+        "total_supply": 15,
+        "suffocate_time": 0,
+        "breathes_water": true,
+        "breathes_air": false,
+        "generates_bubbles": false
+      },
+      "minecraft:timer": {
+        "looping": false,
+        "time": 65,
+        "time_down_event": {
+          "event": "lumen_birds:expire",
+          "target": "self"
+        }
+      }
+    },
+    "events": {
+      "lumen_birds:expire": {
+        "add": {
+          "component_groups": [
+            "lumen_birds:retire"
+          ]
+        }
+      }
+    }
+  }
+}

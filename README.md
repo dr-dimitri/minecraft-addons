@@ -1,10 +1,10 @@
 # minecraft-addons · Lumen Stumme Himmelsvögel
 
-Optionales Tier-Add-on für Minecraft Bedrock unter Windows. Der aktuelle **Entwicklungsstand (Unreleased)** enthält sieben Vogelarten sowie Forellen, Karpfen und unheimliche Hechte mit gelben Leuchtaugen. Am Tag fliegen Raben, Blaumeisen, Rotkehlchen, Stieglitze und Steinadler; in Dämmerung und Nacht übernehmen Eulen und Uhus. Alle Tiere sind dekorativ und stumm. Das Add-on funktioniert eigenständig. Das optionale Lumen-Grafikpaket wird im separaten Repository [minecraft-look](https://github.com/dr-dimitri/minecraft-look) entwickelt; eine gemeinsame Nutzung ist vorbereitet und muss im Spiel noch geprüft werden.
+Optionales Tier-Add-on für Minecraft Bedrock unter Windows. Der aktuelle **Releasekandidat 0.2.0** enthält sieben Vogelarten sowie Forellen, Karpfen und unheimliche Hechte mit gelben Leuchtaugen. Diese Tiere sind dekorativ und stumm. Am Tag fliegen Raben, Blaumeisen, Rotkehlchen, Stieglitze und Steinadler; in Dämmerung und Nacht übernehmen Eulen und Uhus. Dazu kommen das **Tiefenmaul** mit Geburtstagshut und Bauch-Abenteuer sowie eine 100 Blöcke tiefe See. Die separate [Abenteuerwelt](docs/ADVENTURE_WORLD.md) ergänzt vier schwimmende Dörfer, Taucheranzüge, U-Boote und zwei gefährliche Mutantenfische. Verschluckte Dorfhäuser lassen sich im Bauch des Monsters erkunden. Das Add-on funktioniert eigenständig. Das optionale Lumen-Grafikpaket wird im separaten Repository [minecraft-look](https://github.com/dr-dimitri/minecraft-look) entwickelt; eine gemeinsame Nutzung muss im Spiel noch geprüft werden.
 
 **Lokal geprüft, noch nicht in Minecraft ausgeführt.** Auf diesem Mac stehen Minecraft für Windows und die RX 9060 XT nicht zur Verfügung. Import, Animationen, Geräuschfreiheit im Spiel und Bildrate sind daher noch auf dem Ziel-PC zu prüfen. Die Modelle sind bewusst im kantigen Minecraft-Stil gestaltet; es sind keine fotorealistischen Tiermodelle.
 
-Der vorhandene Kandidat **0.1.1 enthält noch keine Eulen, Uhus oder Fische**. Diese Tiere sind im aktuellen Quellstand enthalten und werden erst mit einem neuen versionierten Kandidaten als Update bereitgestellt. Zum Testen des bisherigen Kandidaten gibt es eine [Windows-Checkliste für 0.1.1](docs/releases/0.1.1-windows-checklist.md) mit Dateinamen, Prüfsummen und Feldern für deine Ergebnisse.
+Der **Releasekandidat 0.2.0** enthält alle hier beschriebenen Funktionen. Seine Windows-/Bedrock-Abnahme steht noch aus; automatische Tests ersetzen sie nicht. Der ältere Kandidat 0.1.1 und seine [historische Windows-Checkliste](docs/releases/0.1.1-windows-checklist.md) bleiben unverändert. Aktuelle Prüfungen stehen in [VALIDATION.md](docs/VALIDATION.md) und der [Anleitung zur Abenteuerwelt](docs/ADVENTURE_WORLD.md).
 
 ![Originale Modellgeometrie, außerhalb von Minecraft gerendert](docs/PREVIEW.svg)
 
@@ -15,8 +15,8 @@ Der vorhandene Kandidat **0.1.1 enthält noch keine Eulen, Uhus oder Fische**. D
 ### 1. Das brauchst du
 
 - **Minecraft für Windows (Bedrock Edition)**. Im Minecraft Launcher wählst du „Minecraft für Windows“. Diese Erweiterung lässt sich nicht in der Java Edition verwenden.
-- Laut Paketmanifest mindestens **Bedrock 1.21.90**. Die Mindestversion ist eine technische Voraussetzung; sie bedeutet nicht, dass jede neuere Version bereits mit diesem Add-on getestet wurde.
-- Die Datei **`Lumen-Silent-Birds-0.1.1.mcaddon`**. Sie enthält alles, was Minecraft für die Erweiterung benötigt.
+- Der aktuelle Entwicklungsstand benötigt mindestens **Bedrock 1.21.110** für den stabilen Biomersatz. Der alte Kandidat 0.1.1 benötigte 1.21.90. Die Mindestversion ist eine technische Voraussetzung; sie bedeutet nicht, dass jede neuere Version bereits mit diesem Add-on getestet wurde.
+- Die Datei **`Lumen-Silent-Birds-0.2.0.mcaddon`**. Sie enthält alles, was Minecraft für die Erweiterung benötigt.
 
 Für die Installation einer fertigen Datei brauchst du weder Python noch Node.js. Cheats und experimentelle Funktionen sind für dieses Add-on nicht erforderlich. Auch das separate Lumen-Grafikpaket wird nicht benötigt.
 
@@ -37,7 +37,7 @@ Andernfalls gibt es diese Möglichkeiten:
 ### 3. In Minecraft importieren
 
 1. Starte **Minecraft für Windows** und bleibe im Hauptmenü.
-2. Öffne im Windows-Explorer den Ordner mit `Lumen-Silent-Birds-0.1.1.mcaddon`.
+2. Öffne im Windows-Explorer den Ordner mit `Lumen-Silent-Birds-0.2.0.mcaddon`.
 3. Öffne die Datei per **Doppelklick**. Falls Windows nach einer Anwendung fragt, wähle **Minecraft**. Alternativ verwende **Rechtsklick → Öffnen mit → Minecraft**, sofern angeboten.
 4. Warte, bis Minecraft den erfolgreichen Import meldet. Die Datei enthält zwei Pakete: ein **Verhaltenspaket** für die Tiere und ihre Bewegung und ein **Ressourcenpaket** für ihr Aussehen.
 
@@ -75,6 +75,68 @@ Gehe im aktuellen Entwicklungsstand an einen See, einen breiten Fluss oder einen
 Tagsüber schwimmen **zwei Forellen und zwei Karpfen** zusammen. In Dämmerung und Nacht übernehmen **zwei dunkle Hechte mit gelben, selbstleuchtenden Augen**. Die Augen beleuchten keine umliegenden Blöcke. Flache Pfützen, enge Rinnen, Lava, dünne Wasserströme und mit Wasser gefüllte feste Blöcke sind keine Schwimmräume. Wasserpflanzen können den freien Raum verkleinern; teste zunächst in einem freien Becken.
 
 Für deinen Windows-Test gibt es eine [Fisch-Prüfliste](docs/FISH_VALIDATION.md) mit Wasser-, Tageszeit-, Darstellungs- und Fehlerprüfungen.
+
+### 7. Das Tiefenmaul und sein Bauch-Abenteuer
+
+**Neu im Entwicklungsstand:** Das eigene Meeresungeheuer ist etwa **16 Blöcke lang**,
+hat ein riesiges offenes Maul mit gestuften weißen Zähnen, cyanfarbene Leuchtaugen
+und einen rosa-goldenen Geburtstagshut. Wangen, Augenhöhlen, erhabene Hautplatten,
+Kiemen, Bauchfalten und gegliederte Flossen formen den Körper. Es kann bei Tag und
+Nacht in der Oberwelt erscheinen. Suche in einem tiefen, freien Ozeanbereich: Seine gesamte Schwimmbahn einschließlich Hut
+benötigt ungefähr **29 × 29 Blöcke freie Wasserfläche und 17 Blöcke Tiefe**.
+Auch ein entsprechend großes künstliches Becken ist geeignet; es gibt keinen
+Biomefilter. Suche und Darstellung im Spiel sind noch nicht abgenommen.
+
+Beim normalen Unterwasser-Monster gilt: Schwimme in Survival oder Adventure direkt vor das Maul. Gerätst du in die
+Maulöffnung, wirst du in den hohlen Bauch versetzt. Das Monster hält währenddessen
+an. **Schwimme geradeaus durch das Maul**, um wieder zur Wasseroberfläche zu gelangen.
+Eine Bildschirmanzeige erklärt den Weg. **Schleichen löst jederzeit den Notausgang
+aus**; nach spätestens 20 Sekunden beginnt die automatische Rettung. Pro Monster
+ist ein Spieler gleichzeitig im Bauch. Creative und Spectator werden ignoriert.
+
+Der Bauch ist ein Modellraum im vorhandenen Wasser. Atemschutz, Resistenz V,
+Feuerresistenz und Sättigung schützen während des Aufenthalts. Es gibt keinen
+Schadensangriff, keinen Inventarverlust und keine Spielmodusänderung. Kurzzeitige
+Schutzeffekte laufen nach der Rettung aus; vorhandene schwächere Resistenz wird
+mit ihrer verbleibenden Laufzeit wiederhergestellt. Nach dem Entkommen gilt eine
+Minute Schutz vor erneutem Verschlucken. Das Monster verschwindet bei der Rettung.
+
+Rückkehrdaten werden vor dem Verschlucken am Spieler gespeichert. Bei Wiederladen,
+Abmelden, Wasserverlust oder Verschwinden des Monsters wird eine freie
+Wasseroberfläche gesucht; ersatzweise die weiterhin freie Einstiegsposition.
+Bei einem fehlgeschlagenen Teleport bleibt die Rettung mit Schutz aktiv und wird
+wiederholt. Ein externer Dimensionswechsel wird respektiert. Weltblöcke und
+Inventar bleiben unangetastet. Ohne aktive Skripte kann keine laufende Rettung
+garantiert werden; das Modell hat keine physischen Wände und hält dann niemanden fest.
+
+**Noch nicht in Bedrock geprüft:** Verschlucken, Innenansicht, Schutzwirkung,
+Schwimmen, Notausgang, Rettung und Leistung müssen auf Windows tatsächlich
+getestet werden. Die [Monster-Prüfliste](docs/MONSTER_VALIDATION.md) enthält die Fälle.
+Die Inhalte sind eine eigene Umsetzung; es werden keine Mythicus-Dateien verwendet.
+
+### 8. Die Tiefsee
+
+In neu erzeugten Gebieten ersetzt das Add-on Teile tiefer, ungefrorener Ozeane
+durch das Biom **Lumen-Tiefsee**. Es erhält dunkelblaues Wasser, eigenen
+Unterwassernebel und ein Becken mit **100 Wasserblöcken Tiefe**: Wasser von
+Y −37 bis Y 62, ein fester Tiefenschieferboden bei Y −38. Gespeicherte Chunks
+werden nicht nachträglich vertieft. Das Tiefenmaul kann den großen Wasserraum
+wie andere passende Ozeanbereiche nutzen.
+
+Die Vertiefung erfolgt bei der Welterzeugung und kann dabei natürliche
+Strukturteile im Becken ersetzen. An den Grenzen sind steile, an Chunks
+ausgerichtete Wände möglich. Nachfolgende Vanilla-Features und die tatsächliche
+Bedrock-Erzeugung sind noch zu prüfen. Die Einstellung garantiert keine bestimmte
+Entfernung zum Weltspawn. Die [Tiefsee-Prüfliste](docs/DEEP_SEA_VALIDATION.md)
+beschreibt Tiefe, Grenzen und die ausstehende Leistungsmessung.
+
+Die vorbereitete **Tiefsee-Abenteuerwelt** bietet einen direkten Start am
+Startdorf mit Tauchausrüstung und U-Boot sowie drei weitere Dörfer. Das
+Tiefenmaul kann diese in einer größeren Oberflächenszene schrittweise verschlucken.
+Die verschluckten Häuser und Bewohner bleiben in begehbaren Bauchbereichen
+erhalten. Dort führen ein beleuchteter Ausgang, Schleichen oder die automatische
+Rettung nach drei Minuten zurück ins Meer. Installation, Koordinaten und Grenzen
+stehen in [ADVENTURE_WORLD.md](docs/ADVENTURE_WORLD.md).
 
 ## Wenn etwas nicht funktioniert
 
@@ -126,19 +188,25 @@ Die Vögel haben keine Angriffe, Zähmung, Beute, Erfahrungspunkte oder Fortpfla
 | Karpfen | Kräftiger goldbrauner Körper mit Barteln; Teil derselben Tagesgruppe. |
 | Hecht | Dunkler, länglicher Körper, langer Kiefer und gelbe Leuchtaugen; in Dämmerung und Nacht aktiv. |
 
-Fische haben ein eigenes Limit von **zwölf geladenen Tieren in höchstens drei Gruppen**. Tagsüber sind bis zu zwölf Fische, nachts bis zu sechs Hechte vorgesehen. Zusammen mit dem Vogellimit sind höchstens 30 geladene Add-on-Tiere vorgesehen. Nahe Spieler teilen sich eine Gruppe; weit entfernte Standorte werden reihum versorgt. Die Tageszeiten entsprechen denen der Vögel.
+Fische haben ein eigenes Limit von **zwölf geladenen Tieren in höchstens drei Gruppen**. Tagsüber sind bis zu zwölf Fische, nachts bis zu sechs Hechte vorgesehen. Zusammen mit dem Vogellimit sind höchstens 30 geladene Vögel und Fische vorgesehen. Das Tiefenmaul hat zusätzlich ein eigenes Limit von einem geladenen Exemplar (insgesamt höchstens 31 Tiere). Nahe Spieler teilen sich eine Gruppe; weit entfernte Standorte werden reihum versorgt. Die Tageszeiten entsprechen denen der Vögel.
 
 Schwimmbahnen bleiben an einem festen Ort und verfolgen den Spieler nicht. Vor dem Erzeugen wird der gesamte benötigte Wasserraum geprüft; vor jeder Bewegung werden aktueller und nächster Körperbereich erneut geprüft. Wird Wasser entfernt oder durch ein Hindernis ersetzt, verschwindet der betroffene Fisch. Gruppen werden nach spätestens 45 Sekunden ausgetauscht und bei Tageszeitwechsel, größerer Entfernung, Dimensionswechsel oder Wiederladen aufgeräumt. Ein nativer 60-Sekunden-Timer bleibt als Rückfallebene erhalten.
 
-Die Hechte wirken nur unheimlich: Sie greifen weder Spieler noch andere Tiere an. Alle Fische sind dekorativ, stumm, nicht fangbar und nicht per Eimer sammelbar; es gibt keine Beute, Erfahrungspunkte oder Fortpflanzung. Vanilla-Fische und deren Verhalten bleiben unverändert.
+Die Hechte wirken nur unheimlich: Sie greifen weder Spieler noch andere Tiere an. Forellen, Karpfen und Hechte sind dekorativ, stumm, nicht fangbar und nicht per Eimer sammelbar; es gibt keine Beute, Erfahrungspunkte oder Fortpflanzung. Vanilla-Fische und deren Verhalten bleiben unverändert.
+
+In der Abenteuerwelt kommen getrennt davon höchstens **sechs feindliche Mutanten**
+hinzu: Tiefenbeißer und Laternenmaul. Damit sind bis zu 37 eigene Tiere geladen;
+das U-Boot und die Dorfbewohner zählen separat. Mutanten greifen Schwimmer ab
+Y 20 abwärts an. U-Bootfahrer, Creative/Spectator und Friedlich sind ausgenommen.
+Tauchausrüstung und Kämpfe sind in der [Weltanleitung](docs/ADVENTURE_WORLD.md) erklärt.
 
 ## Leistung und technische Grenzen
 
-Die Modelle bestehen aus Quadern und verwenden je eine 64 × 16 Pixel große Farbpalette. Flügel, Fischflossen und Schwänze bewegen sich durch clientseitige Molang-Animationen. Für die Nachtvögel wird der Sitzstatus an den Client übertragen; ein Animationscontroller blendet die Flug- und Sitzpose ineinander. Eulen und Hechte verwenden TGA-Texturen mit einer Emissionsmaske nur für die Augen. Skripte setzen Position und Blickrichtung mit kleinen `tryTeleport`-Schritten pro Spieltick. Ob der Bedrock-Client diese Schritte ausreichend flüssig darstellt, ist Teil der noch offenen Sichtprüfung.
+Die Modelle bestehen aus Quadern und verwenden Farbpaletten mit 64 × 8 oder 64 × 16 Pixeln. Flügel, Fischflossen und Schwänze bewegen sich durch clientseitige Molang-Animationen. Für die Nachtvögel wird der Sitzstatus an den Client übertragen; ein Animationscontroller blendet die Flug- und Sitzpose ineinander. Eulen, Hechte und das Tiefenmaul verwenden TGA-Texturen mit einer Emissionsmaske nur für die Augen; beim Laternenmaul leuchtet auch der Köder. Skripte setzen Position und Blickrichtung mit kleinen `tryTeleport`-Schritten: Vögel und dekorative Fische pro Tick, Tiefenmaul und Mutanten alle fünf Ticks. Das U-Boot verwendet native Bewegungsimpulse. Ob der Bedrock-Client diese Schritte ausreichend flüssig darstellt, ist Teil der noch offenen Sichtprüfung.
 
 Alle fünf Sekunden prüfen die Controller Spielernähe, freie Bereiche und verwaiste Tiere. Sie erzeugen keine Ticking Areas und laden keine Chunks absichtlich nach. Fischkörper werden konservativ mit umliegenden Wasserblöcken geprüft; Mehrfachabfragen teilen sich nur innerhalb desselben Ticks einen Zwischenspeicher. Die Wassersuche prüft ein begrenztes Raster bis zwölf Blöcke je Horizontalrichtung und sechs Blöcke unter bis zwei Blöcke über der Spielerhöhe. Kleine oder ungünstig zum Raster liegende Becken können unentdeckt bleiben.
 
-Die nativen 60-Sekunden-Timer zählen nur, während die Entität simuliert wird. Entitäten in entladenen Chunks sind weder vollständig zählbar noch sofort entfernbar; nach dem Laden werden sie aufgeräumt. Die Limits von 18 Vögeln und zwölf Fischen beziehen sich deshalb auf geladene Entitäten. Die zusätzlichen Wasserprüfungen und Tiere benötigen eine neue Leistungsmessung im Spiel.
+Die nativen 60-Sekunden-Timer zählen nur, während die Entität simuliert wird. Entitäten in entladenen Chunks sind weder vollständig zählbar noch sofort entfernbar; nach dem Laden werden sie aufgeräumt. Die Limits von 18 Vögeln und zwölf Fischen beziehen sich deshalb auf geladene Entitäten. Das Tiefenmaul prüft zusätzlich eine Wasserhülle von elf Blöcken je Horizontalrichtung und acht Blöcken vertikal; seine Suche ist auf 26.000 Blockabfragen pro Spieler und Suchlauf begrenzt. Sie prüft ein Raster bis 16 Blöcke je Horizontalrichtung und bis 24 Blöcke unter Spielerhöhe. Der große Prüfbereich und die Tiere benötigen eine neue Leistungsmessung im Spiel.
 
 Das Ziel von ungefähr 80 FPS bei WQHD auf der RX 9060 XT 16 GB bleibt ein **Messziel**, kein bestätigtes Ergebnis. Anleitung für die ausstehende Prüfung: [VALIDATION.md](docs/VALIDATION.md).
 
@@ -159,14 +227,17 @@ python -m unittest discover -s tests -v
 python scripts/build.py
 ```
 
-Unter Windows kann `py -3` statt `python` verwendet werden, etwa `py -3 scripts/build.py`. Öffne nach erfolgreichem Build `dist/Lumen-Silent-Birds-0.1.1.mcaddon` wie in Schritt 3 beschrieben. Der Build erzeugt das `.mcaddon`, ein eigenständig nutzbares Quellcode-ZIP und SHA-256-Prüfsummen in `dist/`. Die Archive haben feste Zeitstempel und werden bei unverändertem Quellstand bytegleich gebaut.
+Unter Windows kann `py -3` statt `python` verwendet werden, etwa `py -3 scripts/build.py`. Öffne nach erfolgreichem Build `dist/Lumen-Silent-Birds-0.2.0.mcaddon` wie in Schritt 3 beschrieben. Für die vorbereitete Abenteuerwelt öffne stattdessen `dist/Lumen-Tiefsee-Abenteuer-0.2.0.mcworld`; sie bringt beide Pakete mit. Der Build erzeugt außerdem ein eigenständig nutzbares Quellcode-ZIP und SHA-256-Prüfsummen in `dist/`. Die Archive haben feste Zeitstempel und werden bei unverändertem Quellstand bytegleich gebaut.
 
-`src/` enthält Flug- und Fischcontroller sowie die Prüfungen für Sitzplätze und Wasser. `scripts/generate.py` pflegt Modelle, Farbpaletten, Animationen, Manifest und Entitätskomponenten. `behavior_pack/` und `resource_pack/` werden daraus erzeugt; direkte Änderungen dort werden beim Build ersetzt. `docs/PREVIEW.svg` wird aus derselben Modellgeometrie mit vereinfachter Beleuchtung und festen Posen gerendert. UUIDs bei Updates beibehalten und für einen neuen Releasekandidaten die Versionsnummer in Generator und `package.json` synchron erhöhen.
+`src/` enthält die Tier- und Abenteuersteuerung sowie die Prüfungen für Sitzplätze und Wasser. `scripts/generate.py` pflegt Modelle, Farbpaletten, Animationen, Manifest und Entitätskomponenten; `scripts/deep_sea.py` erzeugt Biom, Becken und Nebel. `behavior_pack/` und `resource_pack/` werden daraus erzeugt; direkte Änderungen dort werden beim Build ersetzt. `docs/PREVIEW.svg` wird aus derselben Modellgeometrie mit vereinfachter Beleuchtung und festen Posen gerendert. UUIDs bei Updates beibehalten und für einen neuen Releasekandidaten die Versionsnummer in Generator und `package.json` synchron erhöhen.
 
 Die eigene Repository-CI prüft das Add-on unabhängig vom Grafikprojekt. Tags nach `birds-vX.Y.Z` erzeugen nach erfolgreicher Prüfung einen Release-Entwurf; die Windows-Abnahme bleibt ein eigener Schritt. Projektvorgaben: [AGENTS.md](AGENTS.md), Änderungen: [CHANGELOG.md](CHANGELOG.md), Releaseleitfaden: [RELEASING.md](docs/RELEASING.md). Das eigenständig baubare Source-ZIP enthält auch diese Dokumente, die Abnahmevorlage und die [Lizenz](LICENSE).
 
 ## Technische Quellen
 
+- [Stabiler Biomersatz ab Bedrock 1.21.110](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/biomesreference/examples/components/minecraftbiomes_replace_biomes?view=minecraft-bedrock-stable)
+- [Moderne Höhenkomponente ohne Geländeverformung](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/biomesreference/examples/components/minecraftbiomes_overworld_height?view=minecraft-bedrock-stable), [Scatter-Features und relative Koordinaten](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/featuresreference/examples/features/minecraft_scatter_feature?view=minecraft-bedrock-stable)
+- [Passendes offizielles Biom-Beispiel für 1.21.110](https://github.com/Mojang/bedrock-samples/blob/v1.21.110.2/behavior_pack/biomes/deep_ocean.biome.json)
 - [Stabile Script API 2.0.0 in Bedrock 1.21.90](https://www.minecraft.net/it-it/article/minecraft-1-21-90-bedrock-changelog)
 - [Pack-Manifest und Script-Abhängigkeiten](https://learn.microsoft.com/minecraft/creator/reference/content/addonsreference/packmanifest?view=minecraft-bedrock-stable)
 - [Dimension: Entitäten und Geländeabfragen](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/dimension?view=minecraft-bedrock-stable), [Entity](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/entity?view=minecraft-bedrock-stable), [TeleportOptions](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/teleportoptions?view=minecraft-bedrock-stable)

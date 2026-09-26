@@ -5,7 +5,10 @@ import re
 import struct
 import uuid
 import zlib
-from generate import ROOT, SPECIES, FISH_SPECIES, NOCTURNAL_SPECIES, EMISSIVE_SPECIES, VERSION, ENGINE, RP_UUID, BP_UUID
+from generate import ROOT, SPECIES, AQUATIC_SPECIES, MONSTER_SPECIES, NOCTURNAL_SPECIES, EMISSIVE_SPECIES, VERSION, ENGINE, RP_UUID, BP_UUID
+from deep_sea import assets as deep_sea_assets
+from diving import assets as diving_assets, binary_assets as diving_textures
+from mutant_fish import assets as mutant_assets, binary_assets as mutant_textures, SPECIES as MUTANTS
 
 
 def require(condition, message):
@@ -41,7 +44,7 @@ def check_png(path, dimensions):
 
 def check_emissive_texture(path, species):
     """Check the uncompressed BGRA texture and its inverse-alpha glow mask."""
-    label = "Pike" if species == "pike" else "Owl"
+    label = "Deepmaw" if species == "deepmaw" else "Pike" if species == "pike" else "Owl"
     data = path.read_bytes()
     require(len(data) == 18 + 64 * 16 * 4, f"TGA pixels: {path}")
     header = struct.unpack("<BBBHHBHHHHBB", data[:18])
@@ -53,7 +56,10 @@ def check_emissive_texture(path, species):
             eye = x >= 56
             require(alpha == (3 if eye else 255), f"{label} eye alpha mask: {path}")
             if eye:
-                if species == "pike":
+                if species == "deepmaw":
+                    require(min(blue, green) >= 128 and min(blue, green) > red * 2,
+                            f"Deepmaw eyes must be cyan: {path}")
+                elif species == "pike":
                     require(min(red, green) >= 128 and max(red, green) <= min(red, green) * 1.5
                             and min(red, green) > blue * 2, f"Pike eyes must be yellow: {path}")
                 else:
@@ -62,6 +68,17 @@ def check_emissive_texture(path, species):
 
 def validate(root=ROOT):
     bp, rp = root / "behavior_pack", root / "resource_pack"
+    for relative, expected in deep_sea_assets().items():
+        path = root / relative
+        require(path.is_file(), f"Missing deep-sea asset: {relative}")
+        require(load(path) == expected, f"Stale deep-sea asset: {relative}")
+    for relative, expected in {**diving_assets(), **mutant_assets()}.items():
+        path = root / relative
+        require(path.is_file(), f"Missing diving asset: {relative}")
+        require(load(path) == expected, f"Stale diving asset: {relative}")
+    for relative, expected in {**diving_textures(), **mutant_textures()}.items():
+        path = root / relative
+        require(path.is_file() and path.read_bytes() == expected, f"Stale diving texture: {relative}")
     bm, rm = load(bp / "manifest.json"), load(rp / "manifest.json")
     all_uuids = []
     for manifest in (bm, rm):
@@ -84,8 +101,13 @@ def validate(root=ROOT):
         require(generated.is_file(), f"Missing generated script: {source.name}")
         require(source.read_bytes() == generated.read_bytes(), f"Stale script: {source.name}")
     scripts = "\n".join(p.read_text() for p in (bp / "scripts").glob("*.js"))
-    require(not re.search(r"\b(playSound|runCommand|playMusic|stopMusic|setBlock|setType)\b", scripts), "Unexpected world/audio mutation")
+    require(not re.search(r"\b(playSound|runCommand|playMusic|stopMusic|setBlock)\b", scripts), "Unexpected world/audio mutation")
+    settings = (bp / "scripts" / "world_settings.js").read_text()
+    require(re.search(r"export\s+const\s+ADVENTURE_WORLD\s*=\s*false\s*;", settings),
+            "Ordinary add-on must not build the adventure village")
     for path in (bp / "scripts").glob("*.js"):
+        if path.name not in {"ocean_village.js", "village_feast.js", "belly_rooms.js"}:
+            require(not re.search(r"\b(setType|setPermutation)\b", path.read_text()), "Block changes outside adventure village")
         for target in re.findall(r"from\s+['\"]([^'\"]+)", path.read_text()):
             if target.startswith("."):
                 require((path.parent / target).is_file(), f"Missing JS import: {target}")
@@ -94,13 +116,13 @@ def validate(root=ROOT):
     animations = load(rp / "animations" / "birds.animation.json")["animations"]
     pose_controllers = load(rp / "animation_controllers" / "nocturnal.animation_controllers.json")["animation_controllers"]
     controllers = load(rp / "render_controllers" / "birds.render_controllers.json")["render_controllers"]
-    require(len(list((bp / "entities").glob("*.json"))) == len(SPECIES), "Unexpected server entities")
-    require(len(list((rp / "entity").glob("*.json"))) == len(SPECIES), "Unexpected client entities")
+    require(len(list((bp / "entities").glob("*.json"))) == len(SPECIES) + len(MUTANTS) + 1, "Unexpected server entities")
+    require(len(list((rp / "entity").glob("*.json"))) == len(SPECIES) + len(MUTANTS) + 1, "Unexpected client entities")
     for species in SPECIES:
         nocturnal = species in NOCTURNAL_SPECIES
-        fish = species in FISH_SPECIES
+        fish = species in AQUATIC_SPECIES
         emissive = species in EMISSIVE_SPECIES
-        label = "Pike" if species == "pike" else "Owl"
+        label = "Deepmaw" if species == "deepmaw" else "Pike" if species == "pike" else "Owl"
         identifier = "lumen_birds:" + species
         server = load(bp / "entities" / (species + ".json"))["minecraft:entity"]
         client = load(rp / "entity" / (species + ".entity.json"))["minecraft:client_entity"]["description"]
@@ -115,7 +137,7 @@ def validate(root=ROOT):
             require("lumen_birds:perched" not in server["description"].get("properties", {}),
                     "Fish cannot use a perch property")
         comp = server["components"]
-        require(comp["minecraft:type_family"]["family"] == ["lumen_fish" if fish else "lumen_birds"],
+        require(comp["minecraft:type_family"]["family"] == ["lumen_monster" if species in MONSTER_SPECIES else "lumen_fish" if fish else "lumen_birds"],
                 "Entity family mismatch")
         require(comp["minecraft:physics"] == {"has_gravity": False, "has_collision": False}, "Physics mismatch")
         require(comp["minecraft:damage_sensor"]["triggers"] == [{"deals_damage": "no"}], "Damage suppression missing")
@@ -143,7 +165,7 @@ def validate(root=ROOT):
                     "Missing emissive eye material")
             eyes = next((bone for bone in geo["bones"] if bone["name"] == "eyes"), None)
             require(eyes is not None and eyes.get("parent") == "head" and len(eyes.get("cubes", [])) == 2,
-                    "Missing owl eye geometry" if nocturnal else "Missing pike eye geometry")
+                    f"Missing {label.lower()} eye geometry")
             for bone in geo["bones"]:
                 for cube in bone.get("cubes", []):
                     for face in cube["uv"].values():
@@ -203,7 +225,7 @@ def validate(root=ROOT):
                 text = path.read_text()
                 load(path)
                 require(not re.search(r'"[^"\n]*(?:sound|runtime_identifier)[^"\n]*"\s*:', text), f"Audio/inheritance key: {path}")
-    return {"json_files": sum(1 for d in (bp, rp) for _ in d.rglob("*.json")), "species": len(SPECIES)}
+    return {"json_files": sum(1 for d in (bp, rp) for _ in d.rglob("*.json")), "species": len(SPECIES) + len(MUTANTS)}
 
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ Alle Schritte sind in diesem Repository ausführbar.
 
 | Produkt | Versionsquelle | Weitere Versionsstellen | Tag | Artefakte |
 |---|---|---|---|---|
-| Stumme Himmelsvögel | `scripts/generate.py`: `VERSION` | `package.json`, README, CHANGELOG | `birds-vX.Y.Z` | `.mcaddon`, Source-ZIP, `SHA256SUMS.txt` |
+| Stumme Himmelsvögel | `scripts/generate.py`: `VERSION` | `package.json`, README, CHANGELOG | `birds-vX.Y.Z` | `.mcaddon`, Tiefsee-`.mcworld`, Source-ZIP, `SHA256SUMS.txt` |
 
 Manifeste, Module und interne Packabhängigkeiten werden aus der Versionsquelle
 erzeugt. `format_version`, `min_engine_version` und die Script-API-Version sind
@@ -79,7 +79,7 @@ Im Git-Checkout verlangt es einen sauberen, vollständig eingecheckten Stand;
 die Versionsnummer im Beispiel durch die des Kandidaten ersetzen:
 
 ```sh
-python3 scripts/check_candidate.py --tag birds-v0.1.1
+python3 scripts/check_candidate.py --tag birds-v0.2.0
 ```
 
 Ohne `--tag` eignet es sich auch für normale Entwicklungscommits. Es prüft
@@ -124,7 +124,7 @@ genügt nicht zur Freigabe des Entwurfsjobs.
 Beispiel für die lokale Tagprüfung (Version an den Kandidaten anpassen):
 
 ```sh
-python3 scripts/check_release.py --tag birds-v0.1.0
+python3 scripts/check_release.py --tag birds-v0.2.0
 ```
 
 Vor dem Tag das Review und die grüne CI des vorgesehenen Commits prüfen. Ein

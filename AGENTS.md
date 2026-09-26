@@ -47,6 +47,11 @@ nicht erforderlich.
   Paletten, Animationen, Entitäten und Manifeste. `behavior_pack/`,
   `resource_pack/` und `docs/PREVIEW.svg` sind generierte, mitzuversionierende
   Ausgaben. Änderungen an den Quellen vornehmen und neu erzeugen.
+- `scripts/deep_sea.py` enthält Biom und Tiefseebecken; `scripts/diving.py`
+  pflegt Tauchausrüstung und U-Boot. `scripts/world_template.py` erzeugt eigene
+  Weltmetadaten und ein separates Welt-Verhaltenspaket mit festen eigenen UUIDs.
+  Dessen `ADVENTURE_WORLD`-Flag aktiviert den einmaligen Dorfaufbau. Im normalen
+  Add-on muss das Flag ausgeschaltet bleiben; bestehende Paket-UUIDs erhalten.
 - `scripts/build.py` ruft Generator und Preview selbst auf und überschreibt beide
   Packordner. Vorher Git-Status prüfen. Unbekannte Änderungen dort zuerst in einer
   vollständigen temporären Kopie einschließlich unversionierter Dateien vergleichen.
@@ -77,6 +82,23 @@ nicht erforderlich.
 - Fremde Assets benötigen nachvollziehbare Herkunft und Rechtehinweise. Die
   bestehenden Modelle und Paletten sind eigene Projektinhalte; `NOTICE.md` und
   `LICENSE` bei geänderter Herkunft entsprechend pflegen.
+- Feindliche Mutantenfische werden in `src/mutant_fish.js` getrennt verwaltet:
+  nur in der aktivierten Abenteuerwelt ab Y 20 abwärts, höchstens sechs geladen,
+  kein Spawn in Friedlich, keine Angriffe auf Creative/Spectator oder Bootsinsassen.
+  Native Schadensberechnung, Trefferabstände und geprüfte Wasserhülle erhalten.
+  Die dekorativen Fische dürfen durch diese Ausnahme nicht feindlich werden.
+- Die beauftragte Tiefsee verändert Blöcke während neuer Welterzeugung.
+  Im ausdrücklich aktivierten Weltpaket baut `src/ocean_village.js` vier Dörfer;
+  `src/belly_rooms.js` baut Bauchkammern und kopiert verschluckte Dorfblöcke;
+  `src/village_feast.js` entfernt ausschließlich geprüfte ursprüngliche Dorfblöcke
+  nach bestätigter Kopie und Spielerrettung. Gefüllte Container, fremde Blöcke
+  und der zentrale Startsteg bleiben erhalten. Fortschritt dauerhaft speichern;
+  bei Wiederladen keine Entfernungen erneut abspielen. Die Oberflächenszene
+  teilt das Monsterlimit und verwendet eine größere Darstellung mit eigener
+  Maulprüfung. Die normale Unterwasser-Prüfhülle bleibt unverändert.
+  Andere Tiercontroller und U-Boot verändern weiterhin keine Blöcke. `.mcworld`
+  mit eingebetteten Packs, Welt-UUIDs, 100 Wasserlagen und Dorf-Opt-in mitprüfen.
+  Eine leere korrekt kodierte Weltdatenbank belegt keinen Bedrock-Import.
 
 ## Prüfung
 

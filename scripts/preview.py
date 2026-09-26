@@ -1,7 +1,7 @@
 """Orthographic SVG inspection of the actual geometry; not an in-game screenshot."""
 from html import escape
 import math
-from generate import ROOT, SPECIES, BIRD_SPECIES, FISH_SPECIES, NOCTURNAL_SPECIES, PALETTES, NAMES, geometry, perch_animation
+from generate import ROOT, SPECIES, BIRD_SPECIES, FISH_SPECIES, AQUATIC_SPECIES, NOCTURNAL_SPECIES, PALETTES, NAMES, geometry, perch_animation
 
 
 def rotate(point, angles, pivot=(0, 0, 0)):
@@ -21,7 +21,7 @@ def bird_svg(species, center, scale, pose="flight"):
     geo = geometry(species)["minecraft:geometry"][0]
     bones = {b["name"]: b for b in geo["bones"]}
     nocturnal = species in NOCTURNAL_SPECIES
-    fish = species in FISH_SPECIES
+    fish = species in AQUATIC_SPECIES
     pose_bones = perch_animation()["bones"] if nocturnal and pose == "perch" else {}
     faces = []
     for bone in geo["bones"]:
@@ -46,9 +46,11 @@ def bird_svg(species, center, scale, pose="flight"):
                 # preview, while the higher flight view also shows the wings.
                 camera = ([24, 0, 0] if pose == "perch" else [38, 0, 0]) if nocturnal else [30, -28, -9]
                 if fish:
-                    camera = [0, 90, 0]
+                    camera = [12, -32, 0] if species == "deepmaw" else [0, 90, 0]
                 points.append(rotate(point, camera))
-            palette = PALETTES[species][int(cube["uv"]["north"]["uv"][0] // 8)]
+            u, v = cube["uv"]["north"]["uv"]
+            palette_index = int(u // 8) + (int(v // 8) * 8 if len(PALETTES[species]) > 8 else 0)
+            palette = PALETTES[species][palette_index]
             rgb = bytes.fromhex(palette)
             for indices, light in [((0, 1, 2, 3), .85), ((4, 7, 6, 5), .65),
                                     ((0, 3, 7, 4), .73), ((1, 5, 6, 2), .95),
@@ -80,8 +82,9 @@ def create_preview():
            '<g font-family="system-ui, sans-serif">',
            '<text x="64" y="65" fill="#e6bd73" font-size="17" letter-spacing="4">LUMEN · STUMME HIMMELSVÖGEL</text>',
            '<text x="64" y="120" fill="#edf4ee" font-size="40" font-weight="650">Leben am Himmel und im Wasser. Ganz ohne Geräusche.</text>',
-           f'<text x="64" y="157" fill="#a6bdc6" font-size="19">Geometrievorschau · {len(BIRD_SPECIES)} Vogel- und {len(FISH_SPECIES)} Fischmodelle · kein Screenshot aus Minecraft</text>']
-    subtitles = {"raven": "Flügelschlag & Gleitphasen", "blue_tit": "Blaue Flügel · gelbe Brust",
+           f'<text x="64" y="157" fill="#a6bdc6" font-size="19">Geometrievorschau · {len(BIRD_SPECIES)} Vogel- und {len(FISH_SPECIES)} Fischmodelle + Tiefenmaul · kein Screenshot aus Minecraft</text>']
+    subtitles = {"deepmaw": "16 Blöcke · Geburtstagshut · großes Maul",
+                 "raven": "Flügelschlag & Gleitphasen", "blue_tit": "Blaue Flügel · gelbe Brust",
                  "robin": "Warme orangefarbene Brust", "goldfinch": "Roter Kopf · gelbe Flügelbinde",
                  "eagle": "Breite Schwingen · ruhige Kreise",
                  "owl": "Dämmerung & Nacht · rote Leuchtaugen",
@@ -89,13 +92,13 @@ def create_preview():
                  "trout": "Silbrige Flanken · dunkle Punkte",
                  "carp": "Goldbrauner Bauch · feine Barteln",
                  "pike": "Dunkler Hecht · gelbe Leuchtaugen"}
-    scales = {"raven": 11, "blue_tit": 19, "robin": 19, "goldfinch": 19, "eagle": 9,
+    scales = {"deepmaw": 1.0, "raven": 11, "blue_tit": 19, "robin": 19, "goldfinch": 19, "eagle": 9,
               "trout": 20, "carp": 20, "pike": 17}
     for index, species in enumerate(SPECIES):
         x = margin + index % columns * (card_w + gap)
         y = 205 + index // columns * (card_h + gap)
         nocturnal = species in NOCTURNAL_SPECIES
-        fish = species in FISH_SPECIES
+        fish = species in AQUATIC_SPECIES
         fill = "#173b40" if fish else "#202f43" if nocturnal else "#173542"
         svg.append(f'<rect x="{x}" y="{y}" width="{card_w}" height="{card_h}" rx="22" fill="{fill}" stroke="#33515b"/>')
         if nocturnal:
@@ -109,7 +112,7 @@ def create_preview():
             svg.append(bird_svg(species, (x + card_w / 2, y + 137), scales[species]))
         svg += [f'<text x="{x + 23}" y="{y + 263}" fill="#edf4ee" font-size="25" font-weight="600">{NAMES[species][0]}</text>',
                 f'<text x="{x + 23}" y="{y + 291}" fill="#a6bdc6" font-size="15">{escape(subtitles[species])}</text>']
-    svg += [f'<text x="64" y="{height - 42}" fill="#a6bdc6" font-size="18">Oberwelt · Tag- und Nachtvögel · dekorative Süßwasserfische in geprüftem Wasser</text>',
+    svg += [f'<text x="64" y="{height - 42}" fill="#a6bdc6" font-size="18">Oberwelt · Tag- und Nachtvögel · Fische und Tiefenmaul in geprüftem Wasser</text>',
             f'<text x="64" y="{height - 16}" fill="#8da4ae" font-size="15">Leuchtaugen, Flug-, Sitz- und Schwimmbewegungen müssen zusätzlich in Minecraft geprüft werden.</text>',
             '</g></svg>']
     (ROOT / "docs" / "PREVIEW.svg").write_text("\n".join(svg), encoding="utf-8")

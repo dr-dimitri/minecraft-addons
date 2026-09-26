@@ -1,6 +1,6 @@
 # Forellen, Karpfen und Hechte auf Windows prüfen
 
-Diese Prüfung gehört zum Entwicklungsstand unter `Unreleased`. Der alte
+Diese Prüfung gehört zum Releasekandidaten `0.2.0`. Der alte
 Kandidat `birds-v0.1.1` enthält keine Fische. Vor einer Abnahme Quellcommit,
 neue Kandidatenversion, CI-Lauf und SHA-256 der tatsächlich installierten Datei
 nach [releases/TEMPLATE.md](releases/TEMPLATE.md) festhalten. Lokale Tests und die

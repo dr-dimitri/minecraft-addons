@@ -14,11 +14,13 @@ import zipfile
 from build import source_files
 from check_release import check_release, require
 from generate import ROOT
+from world_template import world_files, validate_world_files
 
 
 def artifact_names(version):
     return (f"Lumen-Silent-Birds-{version}.mcaddon",
-            f"Lumen-Silent-Birds-Source-{version}.zip")
+            f"Lumen-Silent-Birds-Source-{version}.zip",
+            f"Lumen-Tiefsee-Abenteuer-{version}.mcworld")
 
 
 def verified_hashes(directory, version):
@@ -69,6 +71,11 @@ def verify_addon(path, root):
         verify_archive(addon[f"Lumen-Silent-Birds-{label}.mcpack"], files, kind)
 
 
+def verify_world(path, root):
+    files = verify_archive(path.read_bytes(), world_files(root), "Adventure world")
+    validate_world_files(files)
+
+
 def source_snapshot(root):
     files = dict(source_files(root))
     prefix = "lumen-silent-birds/"
@@ -103,8 +110,9 @@ def check_candidate(root=ROOT, tag=None):
     run(root, sys.executable, "scripts/build.py")
     require(first == verified_hashes(root / "dist", version), "Full repeat build changed archive hashes")
     require(sources == source_snapshot(root), "Build changed committed/generated sources")
-    addon, source = artifact_names(version)
+    addon, source, world = artifact_names(version)
     verify_addon(root / "dist" / addon, root)
+    verify_world(root / "dist" / world, root)
     contents = verify_archive((root / "dist" / source).read_bytes(), sources, "Source ZIP")
     with tempfile.TemporaryDirectory(prefix="lumen-source-check-") as directory:
         extracted = Path(directory)
@@ -125,7 +133,7 @@ def check_candidate(root=ROOT, tag=None):
         run(standalone, sys.executable, "scripts/build.py")
         require(first == verified_hashes(standalone / "dist", version),
                 "Standalone source rebuild changed archive hashes")
-    print(f"PASS: Birds {version}; repeat build, checksums, nested packs, "
+    print(f"PASS: Birds {version}; repeat build, checksums, nested packs, adventure world, "
           "source contents and standalone tests/build")
 
 

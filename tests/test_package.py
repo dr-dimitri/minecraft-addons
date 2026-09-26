@@ -32,7 +32,7 @@ class PackageTests(unittest.TestCase):
         path.write_text(json.dumps(data))
 
     def test_valid_package(self):
-        self.assertEqual(validate(self.root), {"json_files": 37, "species": 10})
+        self.assertEqual(validate(self.root), {"json_files": 77, "species": 13})
 
     def test_missing_texture_is_rejected(self):
         (self.root / "resource_pack/textures/entity/lumen_birds/eagle.png").unlink()

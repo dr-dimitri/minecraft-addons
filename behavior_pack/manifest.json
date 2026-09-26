@@ -2,16 +2,16 @@
   "format_version": 2,
   "header": {
     "name": "Lumen · Stumme Himmelsvögel",
-    "description": "Sieben stumme Vogelarten am Tag und in der Nacht; Forellen, Karpfen und dunkle Hechte mit gelben Leuchtaugen im Wasser.",
+    "description": "Stumme Vögel und Fische, Tiefsee und Tiefenmaul mit Geburtstagshut; Tauchausrüstung und U-Boot für das Meeresabenteuer.",
     "version": [
       0,
-      1,
-      1
+      2,
+      0
     ],
     "min_engine_version": [
       1,
       21,
-      90
+      110
     ],
     "uuid": "142232de-2028-4b6e-8048-c41d5ecda537"
   },
@@ -21,8 +21,8 @@
       "uuid": "4946519a-4f7d-41cd-bdb0-726d5e7225d1",
       "version": [
         0,
-        1,
-        1
+        2,
+        0
       ]
     },
     {
@@ -32,8 +32,8 @@
       "uuid": "d49d11b0-91f2-476d-9d31-d95d4d93bc7a",
       "version": [
         0,
-        1,
-        1
+        2,
+        0
       ]
     }
   ],
@@ -42,8 +42,8 @@
       "uuid": "5ab6115a-55e8-4ba6-8c9a-d2f707667af4",
       "version": [
         0,
-        1,
-        1
+        2,
+        0
       ]
     },
     {

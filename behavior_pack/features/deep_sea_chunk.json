@@ -1,0 +1,23 @@
+{
+  "format_version": "1.21.20",
+  "minecraft:scatter_feature": {
+    "description": {
+      "identifier": "lumen_birds:deep_sea_chunk"
+    },
+    "places_feature": "lumen_birds:deep_sea_row",
+    "distribution": {
+      "iterations": 16,
+      "x": {
+        "distribution": "fixed_grid",
+        "extent": [
+          0,
+          15
+        ],
+        "step_size": 1,
+        "grid_offset": 0
+      },
+      "y": 0,
+      "z": 0
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format_version": "1.21.110",
+  "minecraft:client_biome": {
+    "description": {
+      "identifier": "lumen_birds:deep_sea"
+    },
+    "components": {
+      "minecraft:water_appearance": {
+        "surface_color": "#123A55"
+      },
+      "minecraft:fog_appearance": {
+        "fog_identifier": "lumen_birds:deep_sea"
+      }
+    }
+  }
+}

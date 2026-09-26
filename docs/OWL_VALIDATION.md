@@ -1,6 +1,6 @@
 # Eulen und Uhus im Entwicklungsstand prüfen
 
-Diese zusätzliche Prüfung gilt für die neue Nachtfunktion unter `Unreleased`.
+Diese zusätzliche Prüfung gilt für die Nachtfunktion im Releasekandidaten `0.2.0`.
 Der bisherige Kandidat `birds-v0.1.1` enthält sie noch nicht. Vor einer neuen
 Abnahme den verwendeten Quellcommit, die neue Kandidatenversion und SHA-256 der
 tatsächlich installierten Datei nach [releases/TEMPLATE.md](releases/TEMPLATE.md)

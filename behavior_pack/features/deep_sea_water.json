@@ -1,0 +1,11 @@
+{
+  "format_version": "1.21.20",
+  "minecraft:single_block_feature": {
+    "description": {
+      "identifier": "lumen_birds:deep_sea_water"
+    },
+    "places_block": "minecraft:water",
+    "enforce_placement_rules": false,
+    "enforce_survivability_rules": false
+  }
+}

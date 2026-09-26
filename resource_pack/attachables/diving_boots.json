@@ -1,0 +1,20 @@
+{
+  "format_version": "1.20.30",
+  "minecraft:attachable": {
+    "description": {
+      "identifier": "lumen_birds:diving_boots",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/lumen_birds/diving_palette"
+      },
+      "geometry": {
+        "default": "geometry.lumen_birds.diving_boots"
+      },
+      "render_controllers": [
+        "controller.render.lumen_birds.diving_suit"
+      ]
+    }
+  }
+}

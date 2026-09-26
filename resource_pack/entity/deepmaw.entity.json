@@ -1,0 +1,29 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "lumen_birds:deepmaw",
+      "materials": {
+        "default": "entity_alphatest",
+        "eyes": "entity_emissive"
+      },
+      "textures": {
+        "default": "textures/entity/lumen_birds/deepmaw"
+      },
+      "geometry": {
+        "default": "geometry.lumen_birds.deepmaw"
+      },
+      "animations": {
+        "swim": "animation.lumen_birds.deepmaw.swim"
+      },
+      "scripts": {
+        "animate": [
+          "swim"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.lumen_birds.nocturnal"
+      ]
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "format_version": "1.13.0",
+  "minecraft:feature_rules": {
+    "description": {
+      "identifier": "lumen_birds:deep_sea_basin",
+      "places_feature": "lumen_birds:deep_sea_chunk"
+    },
+    "conditions": {
+      "placement_pass": "after_surface_pass",
+      "minecraft:biome_filter": {
+        "all_of": [
+          {
+            "test": "has_biome_tag",
+            "operator": "==",
+            "value": "lumen_deep_sea"
+          }
+        ]
+      }
+    },
+    "distribution": {
+      "iterations": 1,
+      "x": 0,
+      "y": 0,
+      "z": 0
+    }
+  }
+}

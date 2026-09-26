@@ -1,0 +1,18 @@
+{
+  "resource_pack_name": "lumen_silent_birds",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "lumen_diving_helmet": {
+      "textures": "textures/items/diving_helmet"
+    },
+    "lumen_diving_chestplate": {
+      "textures": "textures/items/diving_chestplate"
+    },
+    "lumen_diving_leggings": {
+      "textures": "textures/items/diving_leggings"
+    },
+    "lumen_diving_boots": {
+      "textures": "textures/items/diving_boots"
+    }
+  }
+}

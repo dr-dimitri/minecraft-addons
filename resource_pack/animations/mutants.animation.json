@@ -1,0 +1,29 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.lumen_birds.abyss_biter.swim": {
+      "loop": true,
+      "bones": {
+        "tail": {
+          "rotation": [
+            0,
+            "math.sin(query.life_time * 220.0) * 18.0",
+            0
+          ]
+        }
+      }
+    },
+    "animation.lumen_birds.lantern_maw.swim": {
+      "loop": true,
+      "bones": {
+        "tail": {
+          "rotation": [
+            0,
+            "math.sin(query.life_time * 220.0) * 18.0",
+            0
+          ]
+        }
+      }
+    }
+  }
+}

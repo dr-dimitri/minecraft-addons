@@ -1,0 +1,29 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "lumen_birds:abyss_biter",
+      "materials": {
+        "default": "entity_alphatest",
+        "glow": "entity_emissive"
+      },
+      "textures": {
+        "default": "textures/entity/lumen_birds/abyss_biter"
+      },
+      "geometry": {
+        "default": "geometry.lumen_birds.abyss_biter"
+      },
+      "animations": {
+        "swim": "animation.lumen_birds.abyss_biter.swim"
+      },
+      "scripts": {
+        "animate": [
+          "swim"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.lumen_birds.mutant"
+      ]
+    }
+  }
+}

@@ -8,5 +8,13 @@
   "textures/entity/lumen_birds/eagle_owl",
   "textures/entity/lumen_birds/trout",
   "textures/entity/lumen_birds/carp",
-  "textures/entity/lumen_birds/pike"
+  "textures/entity/lumen_birds/pike",
+  "textures/entity/lumen_birds/deepmaw",
+  "textures/entity/lumen_birds/diving_palette",
+  "textures/items/diving_helmet",
+  "textures/items/diving_chestplate",
+  "textures/items/diving_leggings",
+  "textures/items/diving_boots",
+  "textures/entity/lumen_birds/abyss_biter",
+  "textures/entity/lumen_birds/lantern_maw"
 ]

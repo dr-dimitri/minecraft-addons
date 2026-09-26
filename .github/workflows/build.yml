@@ -74,6 +74,7 @@ jobs:
           path: |
             dist/Lumen-Silent-Birds-*.mcaddon
             dist/Lumen-Silent-Birds-Source-*.zip
+            dist/Lumen-Tiefsee-Abenteuer-*.mcworld
             dist/SHA256SUMS.txt
           if-no-files-found: error
   draft-release:
@@ -101,7 +102,8 @@ jobs:
           import hashlib, os, re
           from pathlib import Path
           version = os.environ['RELEASE_TAG'].removeprefix('birds-v')
-          expected = {f'Lumen-Silent-Birds-{version}.mcaddon', f'Lumen-Silent-Birds-Source-{version}.zip'}
+          expected = {f'Lumen-Silent-Birds-{version}.mcaddon', f'Lumen-Silent-Birds-Source-{version}.zip',
+                      f'Lumen-Tiefsee-Abenteuer-{version}.mcworld'}
           directory = Path('release-assets')
           if {path.name for path in directory.iterdir()} != expected | {'SHA256SUMS.txt'}:
               raise SystemExit('Unexpected or missing release assets')

@@ -1,0 +1,23 @@
+{
+  "format_version": "1.21.20",
+  "minecraft:scatter_feature": {
+    "description": {
+      "identifier": "lumen_birds:deep_sea_floor_column"
+    },
+    "places_feature": "lumen_birds:deep_sea_floor",
+    "distribution": {
+      "iterations": 1,
+      "x": 0,
+      "y": {
+        "distribution": "fixed_grid",
+        "extent": [
+          -38,
+          -38
+        ],
+        "step_size": 1,
+        "grid_offset": 0
+      },
+      "z": 0
+    }
+  }
+}
